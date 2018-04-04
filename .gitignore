@@ -45,6 +45,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+.pytest_cache
 
 # Translations
 *.mo
@@ -63,6 +64,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/build
 
 # PyBuilder
 target/
@@ -99,3 +101,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# JetBrains
+.idea

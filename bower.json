@@ -1,0 +1,9 @@
+{
+  "name": "gcudm",
+  "authors": ["Pat Daburu <pat@daburu.net>"],
+  "description": "GeoComm Unified Data Model",
+  "main": "index.js",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"]
+}
