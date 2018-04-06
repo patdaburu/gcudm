@@ -14,6 +14,9 @@ from sqlalchemy import Column
 from typing import Any, NamedTuple
 
 
+COLUMN_META_ATTR = '__meta__'  #: the property that contains metadata
+
+
 class Requirement(IntFlag):
     """
     This enumeration describes contracts with source data providers.
@@ -37,7 +40,7 @@ class ColumnMeta(NamedTuple):
     Metadata for table columns.
     """
     label: str  #: a human-friendly column label
-    nena: str = None  #: the equivalent NENA field
+    nena: str or None = None  #: the equivalent NENA field
     requirement: Requirement = Requirement.NONE  #: the source contract
     usage: Usage = Usage.NONE  #: describes how data is used
     guaranteed: bool = False  #: Is the column guaranteed to contain a value?

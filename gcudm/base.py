@@ -17,12 +17,12 @@ from sqlalchemy import String, DateTime
 Base = declarative_base()  #: the declarative base class for the model
 
 
-class EntityMixin(object):
+class ModelMixin(object):
     """
     This is the parent class for all entity classes in the model.  It defines
     common fields.
     """
-    gc_unq_id = column(
+    gcUnqId = column(
         GUID,
         meta=ColumnMeta(
             label='GeoComm ID',
@@ -31,30 +31,35 @@ class EntityMixin(object):
         ),
         primary_key=True
     )
-    src_of_data = column(
+
+    srcOfData = column(
         String,
         ColumnMeta(
             label='Data Source'
         )
     )
-    src_last_ed = column(
+
+    srcLastEd = column(
         DateTime,
         ColumnMeta(
             label='Source of Last Update'
         )
     )
-    upload_auth = column(
+
+    uploadAuth = column(
         String,
         ColumnMeta(
             label='Upload Authority'
         )
     )
-    update_date = column(
+
+    updateDate = column(
         DateTime,
         ColumnMeta(
             label='Last Update'
         )
     )
+
     effective = column(
         DateTime,
         ColumnMeta(
@@ -62,6 +67,7 @@ class EntityMixin(object):
             requirement=Requirement.REQUESTED
         )
     )
+
     expire = column(
         DateTime,
         ColumnMeta(
