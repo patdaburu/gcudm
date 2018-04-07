@@ -3,6 +3,12 @@
 .. toctree::
     :glob:
 
+.. image:: _static/images/logo.svg
+   :width: 150px
+   :alt: gcudm
+   :align: right
+
+
 API Documentation
 =================
 
@@ -20,23 +26,7 @@ gcudm.models.road_centerlines
 .. automodule:: gcudm.models.road_centerlines
     :members:
     :undoc-members:
-    :show-inheritance:
 
-
-
-.. tabularcolumns:: |c|c|
-
-+--------+---------+
-| Search | Display |
-+--------+---------+
-|    ✘   | ✘       |
-+--------+---------+
-
-.. tabularcolumns:: |c|c|p{5cm}|
-
-+--------------+---+-----------+
-|  simple text | 2 | 3         |
-+--------------+---+-----------+
 
 
 

@@ -18,6 +18,24 @@ from typing import Any, List, Set, Tuple, Type
 
 
 def model(cls):
+
+    # Create the RST that defines the table image.
+    col_img_sub = f'tbl_{cls.__name__}'
+    lines = ['']
+    lines.append(f'.. |{col_img_sub}| image:: _static/images/table.svg')
+    lines.append(fmt_rst(':width: 24px', wrap=False))
+    lines.append(fmt_rst(':height: 24px', wrap=False))
+    lines.append('')
+
+    lines.append('')
+    lines.append(f'|{col_img_sub}| **{cls.__tablename__}**')
+
+    lines.append(fmt_rst(f':Geometry Type: coming soon'))
+    # if cls.__doc__ is not None:
+    #     lines.append(cls.__doc__)
+
+    lines.append('')
+
     # We're going to go find all the members within the class hierarchy that
     # seem to be columns with metadata.
     column_members: List[Tuple[str, Column]] = []
@@ -33,18 +51,20 @@ def model(cls):
     # Eliminate duplicates.
     column_members = list(set(column_members))
     column_members.sort(key=lambda i: i[0])
-
-
-
-    #nx = [x[0] for x in column_members]
-    # for nnn in nx:
-    #     print(nnn)
-
+    # Create the RST documentation for all the column members.
     cm_docstrings = [to_rst(cm[0], cm[1].__meta__) for cm in column_members]
     cm_docstring = '\n'.join(cm_docstrings)
 
+    # Add the collected docstrings for the tables.
+    lines.append(cm_docstring)
 
-    cls.__doc__ = f'{cls.__doc__}\n{cm_docstring}' if cls.__doc__ is not None else cm_docstring
+
+
+
+    #cls.__doc__ = f'{cls.__doc__}\n{cm_docstring}' if cls.__doc__ is not None else cm_docstring
+    rst = '\n'.join(lines)
+    cls.__doc__ = rst
+
 
     return cls
 
@@ -92,7 +112,25 @@ def enum_table(
 
 
 def to_rst(member_name: str, meta: ColumnMeta):
-    lines = [f'**{member_name}** - *{meta.label}*']
+    col_img_sub = f'column_{member_name}'
+    lines = ['']
+    lines.append(fmt_rst(f'.. _ref_{member_name}:'))
+
+    lines.append(f'.. |{col_img_sub}| image:: _static/images/column.svg')
+    lines.append(fmt_rst(':width: 24px', wrap=False))
+    lines.append(fmt_rst(':height: 24px', wrap=False))
+    lines.append('')
+
+    # lines.append('-' * len(member_name))
+    # lines.append(member_name)
+    # lines.append('-' * len(member_name))
+
+    #
+
+    lines.append(f'|{col_img_sub}| **{member_name}** - *{meta.label}*')
+
+
+    lines.append(fmt_rst(meta.fmt_description()))
 
 
     # excluded = {Usage.NONE}
@@ -120,10 +158,11 @@ def to_rst(member_name: str, meta: ColumnMeta):
         enum_table(enum_class=Requirement, meta=meta, excluded={Requirement.NONE}, indent=1))
 
     if meta.nena is not None:
-        lines.append(fmt_rst(f'NENA: *{meta.nena}*'))
+        lines.append(fmt_rst(f':NENA: *{meta.nena}*'))
 
 
     # Append a blank line to separate this section from the next one.
     lines.append('')
     rst = '\n'.join(lines)
+
     return rst

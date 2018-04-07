@@ -18,7 +18,10 @@ from geoalchemy2 import Geometry
 
 @model
 class RoadCenterline(Base, ModelMixin):
-
+    """
+    Road centerlines are the principal polyline features that represent
+    road segments traversable by most emergency vehicles.
+    """
     __tablename__ = 'road_centerlines'
 
     geom = Column(Geometry('LINESTRING'))
