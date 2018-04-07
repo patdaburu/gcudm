@@ -40,7 +40,7 @@ def model(cls):
     lines.append(table_name_header)
     lines.append('-' * len(table_name_header))
 
-    print('\n'.join(lines))
+    #print('\n'.join(lines))
 
     lines.append(fmt_rst(f':Table Name: {cls.__tablename__}'))
     lines.append(fmt_rst(f':Geometry Type: {cls.get_geometry_type()}'))
