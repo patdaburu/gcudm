@@ -13,7 +13,8 @@ from .meta import ColumnMeta, COLUMN_META_ATTR, Usage, Requirement
 import inspect
 from functools import wraps
 from sqlalchemy import Column
-from typing import List, Tuple
+from titlecase import titlecase
+from typing import Any, List, Set, Tuple, Type
 
 
 def model(cls):
@@ -51,29 +52,75 @@ def model(cls):
 def fmt_rst(s: str, indent: int=1, wrap: bool=True):
     return '{}{}{}'.format('\t'*indent, s, '\n' if wrap else '')
 
+def enum_table(
+        enum_class: Type,
+        meta: ColumnMeta,
+        excluded: Set[Any],
+        indent: int = 1):
+    lines = []
+    vals = [v for v in enum_class if v not in excluded]
+    colspec = f"|{'|'.join(['c'] * len(vals))}|"
+    lines.append(f'.. tabularcolumns:: {colspec}')
+    lines.append('')
+    tbl_hborders = [''] * len(vals)
+    tbl_headers = [''] * len(vals)
+    tbl_values = [''] * len(vals)
+    for i in range(0, len(vals)):
+        enum_name = vals[i].name
+        colwidth = (len(enum_name) + 2)
+        tbl_hborders[i] = '-' * colwidth
+        tbl_headers[i] = f' {titlecase(enum_name)} '
+        xo = [' '] * colwidth
+        xo[1] = u'Y' if meta.get_enum(enum_class) & vals[i].value else u'N'  # TODO: Get actual value!
+        xos = ''.join(xo)
+        # Update the string with visual symbols.
+        xos = xos.replace('N', '✘')
+        xos = xos.replace('Y', '✔')
+        tbl_values[i] = xos
+    # Construct the table.
+    hborder = f"+{'+'.join(tbl_hborders)}+"
+    lines.append(hborder)
+    lines.append(f"|{'|'.join(tbl_headers)}|")
+    lines.append(hborder)
+    lines.append(f"|{'|'.join(tbl_values)}|")
+    lines.append(hborder)
+
+    lines = [fmt_rst(line, indent=indent, wrap=False) for line in lines]
+    lines.append('')
+    rst = '\n'.join(lines)
+    return rst
 
 
 def to_rst(member_name: str, meta: ColumnMeta):
     lines = [f'**{member_name}** - *{meta.label}*']
+
+
+    # excluded = {Usage.NONE}
+    # vals: List[Usage] = [v for v in Usage if v not in excluded]
+    # tbl_borders = [''] * len(vals)
+    # tbl_headers = [''] * len(vals)
+    # tbl_values = [''] * len(vals)
+    # for i in range(0, len(vals)):
+    #     enum_name = vals[i].name
+    #     tbl_borders[i] = '=' * len(enum_name)
+    #     tbl_headers[i] = titlecase(enum_name)
+    #     pad = len(enum_name) - 1
+    #     xo = '✔' if meta.usage & vals[i].value else '✘'
+    #     tbl_values[i] = f'{xo}{" " * pad}'
+    # lines.append(' '.join(tbl_borders))
+    # lines.append(' '.join(tbl_headers))
+    # lines.append(' '.join(tbl_borders))
+    # lines.append(' '.join(tbl_values))
+    # lines.append(' '.join(tbl_borders))
+
+    #lines.append('')
+    lines.append(enum_table(enum_class=Usage, meta=meta, excluded={Usage.NONE}, indent=1))
+
+    lines.append(
+        enum_table(enum_class=Requirement, meta=meta, excluded={Requirement.NONE}, indent=1))
+
     if meta.nena is not None:
         lines.append(fmt_rst(f'NENA: *{meta.nena}*'))
-
-    lines.append(fmt_rst('Usage'))
-    excluded = {Usage.NONE}
-    vals = [v for v in Usage if v not in excluded]
-    tbl_borders = [None] * len(vals)
-    tbl_headers = [None] * len(vals)
-    tbl_values  = [None] * len(vals)
-    for i in range(0, len(vals)):
-        enum_name = vals[i].name
-        tbl_borders[i] = '=' * len(enum_name)
-        tbl_headers[i] = enum_name
-        tbl_values[i] = f'✔{" " * len(enum_name)}'
-    lines.append(' '.join(tbl_borders))
-    lines.append(' '.join(tbl_headers))
-    lines.append(' '.join(tbl_borders))
-    lines.append(' '.join(tbl_values))
-    lines.append(' '.join(tbl_borders))
 
 
     # Append a blank line to separate this section from the next one.

@@ -24,6 +24,23 @@ gcudm.models.road_centerlines
 
 
 
+.. tabularcolumns:: |c|c|
+
++--------+---------+
+| Search | Display |
++--------+---------+
+|    ✘   | ✘       |
++--------+---------+
+
+.. tabularcolumns:: |c|c|p{5cm}|
+
++--------------+---+-----------+
+|  simple text | 2 | 3         |
++--------------+---+-----------+
+
+
+
+
 
 
 
