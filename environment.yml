@@ -1,4 +1,3 @@
 name: gcudm
 dependencies:
         - python=3.6
-        - titlecase
