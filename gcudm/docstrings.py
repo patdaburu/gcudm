@@ -31,7 +31,10 @@ def model(cls):
     lines.append('')
     #lines.append(f'|{col_img_sub}| **{cls.__tablename__}**')
 
-    table_header = cls.__name__
+    table_header = (
+        cls.__label__ if cls.__label__ is not None
+        else cls.__tablename__
+    )
     table_name_header = f'|{col_img_sub}| {table_header}'
     lines.append('-' * len(table_name_header))
     lines.append(table_name_header)

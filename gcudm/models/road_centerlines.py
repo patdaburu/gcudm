@@ -34,6 +34,8 @@ class RoadCenterline(Base, ModelMixin):
     """
     __tablename__ = 'road_centerlines'
 
+    __label__ = 'Road Centerlines'
+
     geom = Column(Geometry('LINESTRING'))
 
     srcUnqId = column(
