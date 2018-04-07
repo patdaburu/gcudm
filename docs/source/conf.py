@@ -38,6 +38,9 @@ _pysrc = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..
 sys.path.insert(0, _pysrc)
 # Now we can import local modules.
 import gcudm
+import gcudm.base
+
+gcudm.base.__sphinx__ == True
 from gcudm.meta import COLUMN_META_ATTR
 
 # -- Document __init__ methods by default. --------------------------------
@@ -80,8 +83,12 @@ MOCK_MODULES = [
     'scipy.special',
     'math',
     'pandas',
-    #'sqlalchemy',
-    #'geoalchemy2'
+    'psycopg2',
+    'sqlalchemy',
+    'sqlalchemy.ext.declarative',
+    'sqlalchemy.dialects',
+    'sqlalchemy.dialects.postgresql',
+    'geoalchemy2'
 ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 

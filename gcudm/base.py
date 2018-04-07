@@ -14,7 +14,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import String, DateTime
 
 
-Base = declarative_base()  #: the declarative base class for the model
+__sphinx__ = False
+
+
+class Base(object):
+    pass
+
+if not __sphinx__:
+
+    Base = declarative_base()  #: the declarative base class for the model
+
 
 
 class ModelMixin(object):
