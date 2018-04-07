@@ -76,4 +76,7 @@ class ModelMixin(object):
         )
     )
 
+    @staticmethod
+    def get_geometry_type():
+        return 'LINESTRING'  # TODO: Retrieve the geometry type.
 

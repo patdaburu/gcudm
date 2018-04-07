@@ -45,11 +45,12 @@ from gcudm.meta import COLUMN_META_ATTR
 # You can comment this section out to go back to the default behavior.
 # See: http://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
 
-
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 def skip(app, what, name, obj, skip, options):
-    # Skip any member that appears to be a column with its own meta information.
-    if hasattr(obj, COLUMN_META_ATTR):
-        return True
+    # if hasattr(obj, COLUMN_META_ATTR):
+    #     return True
+    # if isinstance(obj, InstrumentedAttribute):
+    #     return True
     # Skip constructors.
     if name == "__init__":
         return True

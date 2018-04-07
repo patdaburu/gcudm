@@ -13,6 +13,7 @@ from .meta import ColumnMeta, COLUMN_META_ATTR, Usage, Requirement
 import inspect
 from functools import wraps
 from sqlalchemy import Column
+import sys
 from titlecase import titlecase
 from typing import Any, List, Set, Tuple, Type
 
@@ -28,9 +29,18 @@ def model(cls):
     lines.append('')
 
     lines.append('')
-    lines.append(f'|{col_img_sub}| **{cls.__tablename__}**')
+    #lines.append(f'|{col_img_sub}| **{cls.__tablename__}**')
 
-    lines.append(fmt_rst(f':Geometry Type: coming soon'))
+    table_header = cls.__name__
+    table_name_header = f'|{col_img_sub}| {table_header}'
+    lines.append('-' * len(table_name_header))
+    lines.append(table_name_header)
+    lines.append('-' * len(table_name_header))
+
+    print('\n'.join(lines))
+
+    lines.append(fmt_rst(f':Table Name: {cls.__tablename__}'))
+    lines.append(fmt_rst(f':Geometry Type: {cls.get_geometry_type()}'))
     # if cls.__doc__ is not None:
     #     lines.append(cls.__doc__)
 
@@ -63,7 +73,11 @@ def model(cls):
 
     #cls.__doc__ = f'{cls.__doc__}\n{cm_docstring}' if cls.__doc__ is not None else cm_docstring
     rst = '\n'.join(lines)
-    cls.__doc__ = rst
+    #cls.__doc__ = rst
+
+    mod = sys.modules[cls.__module__]
+    mod.__doc__ = rst
+
 
 
     return cls
@@ -114,7 +128,7 @@ def enum_table(
 def to_rst(member_name: str, meta: ColumnMeta):
     col_img_sub = f'column_{member_name}'
     lines = ['']
-    lines.append(fmt_rst(f'.. _ref_{member_name}:'))
+    lines.append(f'.. _ref_{member_name}:')
 
     lines.append(f'.. |{col_img_sub}| image:: _static/images/column.svg')
     lines.append(fmt_rst(':width: 24px', wrap=False))
@@ -127,29 +141,12 @@ def to_rst(member_name: str, meta: ColumnMeta):
 
     #
 
-    lines.append(f'|{col_img_sub}| **{member_name}** - *{meta.label}*')
+    member_heading = f'|{col_img_sub}| **{member_name}**'
+    lines.append(member_heading)
+    lines.append('^' * len(member_heading))
 
-
+    lines.append(fmt_rst(f'**{meta.label}** - ', wrap=False))
     lines.append(fmt_rst(meta.fmt_description()))
-
-
-    # excluded = {Usage.NONE}
-    # vals: List[Usage] = [v for v in Usage if v not in excluded]
-    # tbl_borders = [''] * len(vals)
-    # tbl_headers = [''] * len(vals)
-    # tbl_values = [''] * len(vals)
-    # for i in range(0, len(vals)):
-    #     enum_name = vals[i].name
-    #     tbl_borders[i] = '=' * len(enum_name)
-    #     tbl_headers[i] = titlecase(enum_name)
-    #     pad = len(enum_name) - 1
-    #     xo = '✔' if meta.usage & vals[i].value else '✘'
-    #     tbl_values[i] = f'{xo}{" " * pad}'
-    # lines.append(' '.join(tbl_borders))
-    # lines.append(' '.join(tbl_headers))
-    # lines.append(' '.join(tbl_borders))
-    # lines.append(' '.join(tbl_values))
-    # lines.append(' '.join(tbl_borders))
 
     #lines.append('')
     lines.append(enum_table(enum_class=Usage, meta=meta, excluded={Usage.NONE}, indent=1))
@@ -160,9 +157,13 @@ def to_rst(member_name: str, meta: ColumnMeta):
     if meta.nena is not None:
         lines.append(fmt_rst(f':NENA: *{meta.nena}*'))
 
-
     # Append a blank line to separate this section from the next one.
     lines.append('')
+
+    #lines = [fmt_rst(line, indent=1, wrap=False) for line in lines]
+
     rst = '\n'.join(lines)
+
+    # print(rst)
 
     return rst

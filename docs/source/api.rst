@@ -20,12 +20,8 @@ gcudm
     :undoc-members:
     :show-inheritance:
 
------------------------------
-gcudm.models.road_centerlines
------------------------------
 .. automodule:: gcudm.models.road_centerlines
-    :members:
-    :undoc-members:
+
 
 
 
