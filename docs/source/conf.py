@@ -38,10 +38,11 @@ _pysrc = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..
 sys.path.insert(0, _pysrc)
 # Now we can import local modules.
 import gcudm
-import gcudm.base
+import gcudm.docstrings
 
-gcudm.base.__sphinx__ == True
-from gcudm.meta import COLUMN_META_ATTR
+# Indicate that this is a documentation run.
+gcudm.docstrings.__mode__.sphinx = True
+
 
 # -- Document __init__ methods by default. --------------------------------
 # This section was added to allow __init__() to be documented automatically.

@@ -11,18 +11,35 @@ This module contains docstring generators.
 
 from .meta import ColumnMeta, COLUMN_META_ATTR, Usage, Requirement
 import inspect
-from functools import wraps
+from singleton_decorator import singleton
 from sqlalchemy import Column
 import sys
 from titlecase import titlecase
 from typing import Any, List, Set, Tuple, Type
 
 
-def model(cls):
+@singleton
+class Mode(object):
+    """
+    Represents the mode in which the library is currently being run.  If
+    the module has been loaded to generate documentation, the `sphinx`
+    attribute should be set to `True`.
+    """
+    def __init__(self):
+        self.sphinx = False
 
+
+__mode__ = Mode()  #: the current mode
+
+
+def model(cls):
+    mod = sys.modules[cls.__module__]
     # Create the RST that defines the table image.
     col_img_sub = f'tbl_{cls.__name__}'
     lines = ['']
+    if mod.__doc__ is not None:
+        lines.append(mod.__doc__)
+
     lines.append(f'.. |{col_img_sub}| image:: _static/images/table.svg')
     lines.append(fmt_rst(':width: 24px', wrap=False))
     lines.append(fmt_rst(':height: 24px', wrap=False))
@@ -40,10 +57,14 @@ def model(cls):
     lines.append(table_name_header)
     lines.append('-' * len(table_name_header))
 
+    if cls.__doc__ is not None:
+        lines.append(cls.__doc__)
+        lines.append('')
+
     #print('\n'.join(lines))
 
     lines.append(fmt_rst(f':Table Name: {cls.__tablename__}'))
-    lines.append(fmt_rst(f':Geometry Type: {cls.get_geometry_type()}'))
+    lines.append(fmt_rst(f':Geometry Type: {cls.geometry_type()}'))
     # if cls.__doc__ is not None:
     #     lines.append(cls.__doc__)
 
@@ -78,9 +99,7 @@ def model(cls):
     rst = '\n'.join(lines)
     #cls.__doc__ = rst
 
-    mod = sys.modules[cls.__module__]
     mod.__doc__ = rst
-
 
 
     return cls
@@ -128,6 +147,10 @@ def enum_table(
     return rst
 
 
+def simple_str(s: str):
+    return s  # TODO: Improve this!
+
+
 def to_rst(member_name: str, meta: ColumnMeta):
     col_img_sub = f'column_{member_name}'
     lines = ['']
@@ -149,7 +172,7 @@ def to_rst(member_name: str, meta: ColumnMeta):
     lines.append('^' * len(member_heading))
 
     lines.append(fmt_rst(f'**{meta.label}** - ', wrap=False))
-    lines.append(fmt_rst(meta.fmt_description()))
+    lines.append(fmt_rst(simple_str(meta.description)))
 
     #lines.append('')
     lines.append(enum_table(enum_class=Usage, meta=meta, excluded={Usage.NONE}, indent=1))

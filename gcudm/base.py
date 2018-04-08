@@ -8,22 +8,24 @@
 
 The GeoAlchemy declarative base is defined in this module.
 """
+from .docstrings import Mode
 from .meta import column, ColumnMeta, Requirement, Usage
 from .types import GUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import String, DateTime
 
 
-__sphinx__ = False
-
-
 class Base(object):
+    """
+    This is the declarative base class for SQLAlchemy and GeoAlchemy objects.
+    """
     pass
 
-if not __sphinx__:
 
+# If we aren't running in "Sphinx" mode to generate documentation...
+if not Mode().sphinx:
+    # ...we want an actual declarative base.
     Base = declarative_base()  #: the declarative base class for the model
-
 
 
 class ModelMixin(object):
@@ -85,7 +87,7 @@ class ModelMixin(object):
         )
     )
 
-    @staticmethod
-    def get_geometry_type():
+    @classmethod
+    def geometry_type(cls):
         return 'LINESTRING'  # TODO: Retrieve the geometry type.
 

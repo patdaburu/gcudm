@@ -21,7 +21,7 @@ with open(path.join(here, 'README'), encoding='utf-8') as f:
     long_description = f.read()
 
 # Get the base version from the library.
-version=gcudm.__version__
+version = gcudm.__version__
 
 # If the environment has a build number set...
 if os.getenv('buildnum') is not None:
@@ -40,6 +40,8 @@ setup(
     # 'numpy>=1.13.3,<2',
     # 'measurement>=1.8.0,<2'
     'GeoAlchemy2>=0.4.2,<1',
+    'SQLAlchemy>=1.2.6,<2',
+    'singleton-decorator>=1.0.0,<2',
     'titlecase>=0.12.0,<1'
   ],
   python_requires=">=3.6",

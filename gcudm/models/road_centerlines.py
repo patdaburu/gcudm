@@ -18,14 +18,6 @@ from sqlalchemy import Column, Integer, String, DateTime
 from geoalchemy2 import Geometry
 
 
-class AClass(object):
-    def __init__(self):
-        self.alpha = 'Hello'  #: this is the alpha
-
-    def do_it(self) -> str:
-        return "ok"
-
-
 @model
 class RoadCenterline(Base, ModelMixin):
     """
