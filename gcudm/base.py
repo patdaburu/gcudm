@@ -26,7 +26,7 @@ class Base(object):
 # If we aren't running in "Sphinx" mode to generate documentation...
 if not Modes().sphinx:
     # ...we want an actual declarative base.
-    Base = declarative_base()  #: the declarative base class for the model
+    Base = declarative_base()  #: This is the model's declarative base.
 
 
 class ModelMixin(object):
