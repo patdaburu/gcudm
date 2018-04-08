@@ -9,7 +9,8 @@
 This module contains metadata objects to help with inline documentation of the
 model.
 """
-from enum import Enum, IntFlag
+
+from enum import IntFlag
 from sqlalchemy import Column
 from typing import Any, NamedTuple, Type, Union
 
@@ -47,13 +48,16 @@ class ColumnMeta(NamedTuple):
     guaranteed: bool = False  #: Is the column guaranteed to contain a value?
     calculated: bool = False  #: May the column's value be calculated?
 
-    def fmt_description(self) -> str:
-        return self.description
-
     def get_enum(
             self,
             enum_cls: Type[Union[Requirement, Usage]]
     ) -> Requirement or Usage or None:
+        """
+        Get the current value of an attribute defined by an enumeration.
+
+        :param enum_cls: the enumeration class
+        :return: the value of the attribute
+        """
         try:
             return {
                 Requirement: lambda: self.requirement,
@@ -61,7 +65,6 @@ class ColumnMeta(NamedTuple):
             }[enum_cls]()
         except KeyError:
             return None
-
 
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
@@ -73,6 +76,7 @@ def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
     :return: a GeoAlchemy :py:class:`Column`
     """
     c = Column(dtype, *args, **kwargs)
-    c.__dict__['__meta__'] = meta
+    c.__dict__[COLUMN_META_ATTR] = meta
     return c
+
 

@@ -18,23 +18,14 @@ from sqlalchemy import Column, Integer, String, DateTime
 from geoalchemy2 import Geometry
 
 
-class AClass(object):
-    def __init__(self):
-        self.alpha = 'Hello'  #: this is the alpha
-
-    def do_it(self) -> str:
-        return "ok"
-
-
-@model
+@model(label='Road Centerlines')
 class RoadCenterline(Base, ModelMixin):
     """
     Road centerlines are the principal polyline features that represent
     road segments traversable by most emergency vehicles.
     """
-    __tablename__ = 'road_centerlines'
 
-    __label__ = 'Road Centerlines'
+    __tablename__ = 'road_centerlines'
 
     geom = Column(Geometry('LINESTRING'))
 
