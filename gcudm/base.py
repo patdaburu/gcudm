@@ -8,8 +8,8 @@
 
 The GeoAlchemy declarative base is defined in this module.
 """
-from .docstrings import Mode
-from .meta import column, ColumnMeta, Requirement, Usage
+from .modes import Modes
+from .meta import column, ColumnMeta, Requirement
 from .types import GUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import String, DateTime
@@ -23,7 +23,7 @@ class Base(object):
 
 
 # If we aren't running in "Sphinx" mode to generate documentation...
-if not Mode().sphinx:
+if not Modes().sphinx:
     # ...we want an actual declarative base.
     Base = declarative_base()  #: the declarative base class for the model
 

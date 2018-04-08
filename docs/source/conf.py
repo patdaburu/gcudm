@@ -38,10 +38,10 @@ _pysrc = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..
 sys.path.insert(0, _pysrc)
 # Now we can import local modules.
 import gcudm
-import gcudm.docstrings
+from gcudm.modes import Modes
 
 # Indicate that this is a documentation run.
-gcudm.docstrings.__mode__.sphinx = True
+Modes().sphinx = True
 
 
 # -- Document __init__ methods by default. --------------------------------
