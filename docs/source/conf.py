@@ -83,13 +83,7 @@ MOCK_MODULES = [
     'scipy.interpolate',
     'scipy.special',
     'math',
-    'pandas',
-    'psycopg2',
-    'sqlalchemy',
-    'sqlalchemy.ext.declarative',
-    'sqlalchemy.dialects',
-    'sqlalchemy.dialects.postgresql',
-    'geoalchemy2'
+    'pandas'
 ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 

@@ -88,6 +88,15 @@ class ModelMixin(object):
         )
     )
 
+    srcUnqId = column(
+        String,
+        ColumnMeta(
+            label='NENA ID',
+            nena='RCL_NGUID',
+            requirement=Requirement.REQUESTED
+        )
+    )
+
     @classmethod
     def geometry_type(cls):
         return 'LINESTRING'  # TODO: Retrieve the geometry type.
