@@ -39,6 +39,8 @@ setup(
     # Here are a couple of examples...
     # 'numpy>=1.13.3,<2',
     # 'measurement>=1.8.0,<2'
+    'psycopg2>=2.7.4,<3',
+    'psycopg2-binary>=2.7.4,<3',
     'GeoAlchemy2>=0.4.2,<1',
     'SQLAlchemy>=1.2.6,<2',
     'singleton-decorator>=1.0.0,<2',
