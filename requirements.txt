@@ -1,5 +1,7 @@
 GeoAlchemy2>=0.4.2,<1
 parameterized>=0.6.1,<1
+psycopg2>=2.7.4,<3
+psycopg2-binary>=2.7.4,<3
 pytest>=3.4.0,<4
 pytest-cov>=2.5.1,<3
 pytest-pythonpath>=0.7.2,<1
