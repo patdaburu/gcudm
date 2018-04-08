@@ -6,7 +6,9 @@
 .. currentmodule:: road_centerlines
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-Say something descriptive about the 'road_centerlines' module.
+
+
+
 """
 
 from ..docstrings import model
@@ -16,10 +18,23 @@ from sqlalchemy import Column, Integer, String, DateTime
 from geoalchemy2 import Geometry
 
 
+class AClass(object):
+    def __init__(self):
+        self.alpha = 'Hello'  #: this is the alpha
+
+    def do_it(self) -> str:
+        return "ok"
+
+
 @model
 class RoadCenterline(Base, ModelMixin):
-
+    """
+    Road centerlines are the principal polyline features that represent
+    road segments traversable by most emergency vehicles.
+    """
     __tablename__ = 'road_centerlines'
+
+    __label__ = 'Road Centerlines'
 
     geom = Column(Geometry('LINESTRING'))
 

@@ -9,9 +9,9 @@
 This module contains metadata objects to help with inline documentation of the
 model.
 """
-from enum import IntFlag
+from enum import Enum, IntFlag
 from sqlalchemy import Column
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, Type, Union
 
 
 COLUMN_META_ATTR = '__meta__'  #: the property that contains metadata
@@ -40,11 +40,28 @@ class ColumnMeta(NamedTuple):
     Metadata for table columns.
     """
     label: str  #: a human-friendly column label
+    description: str = 'This field needs a description.'
     nena: str or None = None  #: the equivalent NENA field
     requirement: Requirement = Requirement.NONE  #: the source contract
     usage: Usage = Usage.NONE  #: describes how data is used
     guaranteed: bool = False  #: Is the column guaranteed to contain a value?
     calculated: bool = False  #: May the column's value be calculated?
+
+    def fmt_description(self) -> str:
+        return self.description
+
+    def get_enum(
+            self,
+            enum_cls: Type[Union[Requirement, Usage]]
+    ) -> Requirement or Usage or None:
+        try:
+            return {
+                Requirement: lambda: self.requirement,
+                Usage: lambda: self.usage
+            }[enum_cls]()
+        except KeyError:
+            return None
+
 
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:

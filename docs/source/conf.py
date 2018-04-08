@@ -38,6 +38,9 @@ _pysrc = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..
 sys.path.insert(0, _pysrc)
 # Now we can import local modules.
 import gcudm
+import gcudm.base
+
+gcudm.base.__sphinx__ == True
 from gcudm.meta import COLUMN_META_ATTR
 
 # -- Document __init__ methods by default. --------------------------------
@@ -45,11 +48,12 @@ from gcudm.meta import COLUMN_META_ATTR
 # You can comment this section out to go back to the default behavior.
 # See: http://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
 
-
+from sqlalchemy.orm.attributes import InstrumentedAttribute
 def skip(app, what, name, obj, skip, options):
-    # Skip any member that appears to be a column with its own meta information.
-    if hasattr(obj, COLUMN_META_ATTR):
-        return True
+    # if hasattr(obj, COLUMN_META_ATTR):
+    #     return True
+    # if isinstance(obj, InstrumentedAttribute):
+    #     return True
     # Skip constructors.
     if name == "__init__":
         return True
@@ -78,7 +82,13 @@ MOCK_MODULES = [
     'scipy.interpolate',
     'scipy.special',
     'math',
-    'pandas'
+    'pandas',
+    'psycopg2',
+    'sqlalchemy',
+    'sqlalchemy.ext.declarative',
+    'sqlalchemy.dialects',
+    'sqlalchemy.dialects.postgresql',
+    'geoalchemy2'
 ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
@@ -147,6 +157,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+#html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

@@ -39,7 +39,8 @@ setup(
     # Here are a couple of examples...
     # 'numpy>=1.13.3,<2',
     # 'measurement>=1.8.0,<2'
-    'GeoAlchemy2>=0.4.2,<1'
+    'GeoAlchemy2>=0.4.2,<1',
+    'titlecase>=0.12.0,<1'
   ],
   python_requires=">=3.6",
   license='MIT',
