@@ -7,10 +7,20 @@
    :alt: gcudm
    :align: right
 
-gcudm
-=====
+The GeoComm Unified Data Model
+==============================
 
-GeoComm Unified Data Model
+This package (`gcudm`) contains the *GeoComm Unified Data Model* implemented as
+a `GeoAlchemy2 <http://geoalchemy-2.readthedocs.io/en/latest/>`_
+object-relational model.
+
+Each version of the package represents the corresponding version of the
+:ref:`data model <udm-doc>`.
+
+If you want to get started using the library, check out
+:ref:`the tutorial <gcudm-tutorial>`.
+
+
 
 .. toctree::
    :maxdepth: 2

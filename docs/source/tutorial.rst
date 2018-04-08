@@ -1,4 +1,4 @@
-.. gcudm_tutorial
+.. _gcudm-tutorial:
 
 .. image:: _static/images/logo.svg
    :width: 150px
