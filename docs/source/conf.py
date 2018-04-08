@@ -89,8 +89,7 @@ MOCK_MODULES = [
     'sqlalchemy.ext.declarative',
     'sqlalchemy.dialects',
     'sqlalchemy.dialects.postgresql',
-    'geoalchemy2',
-    'singleton_decorator'
+    'geoalchemy2'
 ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
