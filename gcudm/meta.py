@@ -9,6 +9,7 @@
 This module contains metadata objects to help with inline documentation of the
 model.
 """
+
 from enum import IntFlag
 from sqlalchemy import Column
 from typing import Any, NamedTuple, Type, Union
@@ -77,4 +78,5 @@ def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
     c = Column(dtype, *args, **kwargs)
     c.__dict__[COLUMN_META_ATTR] = meta
     return c
+
 

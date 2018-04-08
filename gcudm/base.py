@@ -6,7 +6,8 @@
 .. currentmodule:: base
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-The GeoAlchemy declarative base is defined in this module.
+The GeoAlchemy declarative base for the data model is defined in this module
+along with some other helpful classes.
 """
 from .modes import Modes
 from .meta import column, ColumnMeta, Requirement

@@ -20,6 +20,55 @@ gcudm
     :undoc-members:
     :show-inheritance:
 
+----------
+gcudm.base
+----------
+.. automodule:: gcudm.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+----------------
+gcudm.docstrings
+----------------
+.. automodule:: gcudm.docstrings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+----------
+gcudm.meta
+----------
+.. automodule:: gcudm.meta
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+-----------
+gcudm.model
+-----------
+.. automodule:: gcudm.model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+-----------
+gcudm.modes
+-----------
+.. automodule:: gcudm.modes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+-----------
+gcudm.types
+-----------
+.. automodule:: gcudm.types
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 
 
 
