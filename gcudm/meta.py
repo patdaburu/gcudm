@@ -43,8 +43,8 @@ class ColumnMeta(NamedTuple):
     label: str  #: a human-friendly column label
     description: str = 'This field needs a description.'
     nena: str or None = None  #: the equivalent NENA field
-    requirement: Requirement = Requirement.NONE  #: the source contract
-    usage: Usage = Usage.NONE  #: describes how data is used
+    requirement: Requirement or int = Requirement.NONE  #: the source contract
+    usage: Usage or int = Usage.NONE  #: describes how data is used
     guaranteed: bool = False  #: Is the column guaranteed to contain a value?
     calculated: bool = False  #: May the column's value be calculated?
 
@@ -58,13 +58,20 @@ class ColumnMeta(NamedTuple):
         :param enum_cls: the enumeration class
         :return: the value of the attribute
         """
-        try:
-            return {
-                Requirement: lambda: self.requirement,
-                Usage: lambda: self.usage
-            }[enum_cls]()
-        except KeyError:
+        if enum_cls == Requirement:
+            return self.requirement
+        elif enum_cls == Usage:
+            return self.usage
+        else:
             return None
+
+        # try:
+        #     return {
+        #         Requirement: lambda: self.requirement,
+        #         Usage: lambda: self.usage
+        #     }[enum_cls]()
+        # except KeyError:
+        #     return None
 
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:

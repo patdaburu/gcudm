@@ -29,15 +29,6 @@ class RoadCenterline(Base, ModelMixin):
 
     geom = Column(Geometry('LINESTRING'))
 
-    srcUnqId = column(
-        String,
-        ColumnMeta(
-            label='NENA ID',
-            nena='RCL_NGUID',
-            requirement=Requirement.REQUESTED
-        )
-    )
-
     srcFullNam = column(
         String,
         ColumnMeta(
