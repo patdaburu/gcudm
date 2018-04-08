@@ -16,6 +16,7 @@ GeoComm Unified Data Model
    :maxdepth: 2
    :caption: Contents:
 
+   tutorial
    udm
    api
    requirements

@@ -48,7 +48,7 @@ class ModelRstFormatter(object):
         """
         return '{}{}{}'.format('\t' * indent, line, '\n' if wrap else '')
 
-    def enum2rst(self,
+    def enum2tbl(self,
                  enum_cls: Type[Union[Requirement, Usage]],
                  meta: ColumnMeta,
                  excluded: Set[Any],
@@ -113,10 +113,10 @@ class ModelRstFormatter(object):
         rst = '\n'.join(lines)
         return rst  # ...that's that.
 
-    def col2rst(self,
-                table_name: str,
-                column_name: str,
-                meta: ColumnMeta) -> str:
+    def col2section(self,
+                    table_name: str,
+                    column_name: str,
+                    meta: ColumnMeta) -> str:
         """
         Format a block of reStructuredText to represent a column.
 
@@ -144,11 +144,11 @@ class ModelRstFormatter(object):
         lines.append(self.format_line(self.simplify_docstring(meta.description)))
         # Add the table of Usage values.
         lines.append(
-            self.enum2rst(enum_cls=Usage, meta=meta, excluded={Usage.NONE},
+            self.enum2tbl(enum_cls=Usage, meta=meta, excluded={Usage.NONE},
                           indent=1))
         # Add the table of Requirement values.
         lines.append(
-            self.enum2rst(enum_cls=Requirement, meta=meta,
+            self.enum2tbl(enum_cls=Requirement, meta=meta,
                           excluded={Requirement.NONE}, indent=1))
 
         # If the meta-data indicates there is a related NENA field...
@@ -217,7 +217,7 @@ class ModelRstFormatter(object):
         column_members.sort(key=lambda i: i[0])
         # Create the RST documentation for all the column members.
         cm_docstrings = [
-            self.col2rst(
+            self.col2section(
                 table_name=cls.__tablename__,
                 column_name=cm[0],
                 meta=cm[1].__meta__)
