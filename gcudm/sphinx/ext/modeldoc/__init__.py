@@ -37,6 +37,10 @@ from sphinx.ext.autodoc import (
 )
 from sqlalchemy.sql.schema import Column
 
+from ....docstrings import ModelRstFormatter
+
+model_rst_formatter = ModelRstFormatter()
+
 __version__ = '0.0.1'
 
 def setup(app):
@@ -87,7 +91,8 @@ class MyAttributeDocumenter(AttributeDocumenter):
     def add_content(self, more_content, no_docstring=False):
         # type: (Any, bool) -> None
         _no_docstring = no_docstring
-        print(f'self.object is a(n) {type(self.object)}')
+#        print(f'self.object is a(n) {type(self.object)}')
+#        print(f"does it have meta?  {hasattr(self.object, '__meta__')}")
         if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):  #: TODO Get the __meta__ from the property!
             print('no_docstring=False')
             _no_docstring = False
@@ -111,10 +116,8 @@ class MyAttributeDocumenter(AttributeDocumenter):
                 else:
                     self.add_line(u'   :annotation: = ' + objrepr, sourcename)  # This is it!!!
         elif self.options.annotation is SUPPRESS:
-            print(4)
             pass
         else:
-            print(5)
             self.add_line(u'   :annotation: %s' % self.options.annotation,
                           sourcename)
 
@@ -122,12 +125,39 @@ class MyAttributeDocumenter(AttributeDocumenter):
     def get_doc(self, encoding=None, ignore=1):
         # type: (unicode, int) -> List[List[unicode]]
         """Decode and return lines of the docstring(s) for the object."""
+
+        if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):
+
+            meta = self.object.__meta__
+            print(f'the label is {meta.label}')
+
+            # GARBANZO BEANS
+            #meta = self.get_attr(self.object, '__meta__', None)
+            rst = model_rst_formatter.col2section(meta)   # TODO: Don't use '__meta__' string!
+            return[prepare_docstring(rst, 0)]
+
+        # if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):
+        #
+        #     meta = self.object.__meta__
+        #     print(f'the label is {meta.label}')
+        #
+        #     # GARBANZO BEANS
+        #     #meta = self.get_attr(self.object, '__meta__', None)
+        #     rst = model_rst_formatter.col2section(meta)   # TODO: Don't use '__meta__' string!
+        #
+        #     return[prepare_docstring(rst, ignore)]
+
+
         docstring = self.get_attr(self.object, '__doc__', None)
 
-        print(f'type is... {type(self.object)}')
-        if isinstance(self.object, Column):
-            print('returning the original this!')
-            return [prepare_docstring('I am a column!', ignore)]
+
+#        print(f'self.object is a(n) {type(self.object)}')
+#        print(f"does it have meta?  {hasattr(self.object, '__meta__')}")
+
+
+
+            #print('returning the original this!')
+            #return [prepare_docstring('I am a column!', ignore)]
 
         if docstring is None and self.env.config.autodoc_inherit_docstrings:
             docstring = getdoc(self.object)

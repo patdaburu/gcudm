@@ -114,8 +114,8 @@ class ModelRstFormatter(object):
         return rst  # ...that's that.
 
     def col2section(self,
-                    table_name: str,
-                    column_name: str,
+                    #table_name: str,
+                    #column_name: str,
                     meta: ColumnMeta) -> str:
         """
         Format a block of reStructuredText to represent a column.
@@ -125,19 +125,24 @@ class ModelRstFormatter(object):
         :param meta: the column's meta data
         :return: a block of reStructuredText
         """
-        # Start by creating an internal bookmark for the column.
-        lines = [f'.. _ref_{table_name}_{column_name}:']
-        # Create the name of the inline image used to represent the column.
-        col_img_sub = f'img_{table_name}_{column_name}'
-        # Add the image definition.
-        lines.append(f'.. |{col_img_sub}| image:: _static/images/column.svg')
-        lines.append(self.format_line(':width: 24px', wrap=False))
-        lines.append(self.format_line(':height: 24px', wrap=False))
-        lines.append('')
-        # Create the heading.
-        heading = f'|{col_img_sub}| **{column_name}**'
-        lines.append(heading)
-        lines.append('^' * len(heading))
+        # # Start by creating an internal bookmark for the column.
+        # lines = [f'.. _ref_{table_name}_{column_name}:']
+        # # Create the name of the inline image used to represent the column.
+        # col_img_sub = f'img_{table_name}_{column_name}'
+        # # Add the image definition.
+        # lines.append(f'.. |{col_img_sub}| image:: _static/images/column.svg')
+        # lines.append(self.format_line(':width: 24px', wrap=False))
+        # lines.append(self.format_line(':height: 24px', wrap=False))
+        # lines.append('')
+        # # Create the heading.
+        # heading = f'|{col_img_sub}| **{column_name}**'
+        # lines.append(heading)
+        # lines.append('^' * len(heading))
+
+        # break!!!!
+        # break!
+        lines = []
+
         # Add the label.
         lines.append(self.format_line(f'**{meta.label}** - ', wrap=False))
         # Add the description.
