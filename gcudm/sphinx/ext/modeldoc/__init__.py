@@ -35,6 +35,7 @@ from sphinx.ext.autodoc import (
     DataDocumenter, FunctionDocumenter, MethodDocumenter, AttributeDocumenter,
     InstanceAttributeDocumenter, ClassDocumenter
 )
+from sqlalchemy.sql.schema import Column
 
 __version__ = '0.0.1'
 
@@ -75,18 +76,26 @@ class MyClassDocumenter(ClassDocumenter):
             return False
 
 
-from sphinx.util.inspect import object_description
+from sphinx.util.inspect import object_description, getdoc
+from sphinx.util.docstrings import prepare_docstring
 from sphinx.ext.autodoc import SUPPRESS
+from six import text_type
+from sphinx.util import force_decode
 
 class MyAttributeDocumenter(AttributeDocumenter):
 
     def add_content(self, more_content, no_docstring=False):
         # type: (Any, bool) -> None
-        if not self._datadescriptor:
+        _no_docstring = no_docstring
+        print(f'self.object is a(n) {type(self.object)}')
+        if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):  #: TODO Get the __meta__ from the property!
+            print('no_docstring=False')
+            _no_docstring = False
+        elif not self._datadescriptor:
             # if it's not a data descriptor, its docstring is very probably the
             # wrong thing to display
-            no_docstring = True
-        ClassLevelDocumenter.add_content(self, more_content, no_docstring)
+            _no_docstring = True
+        ClassLevelDocumenter.add_content(self, more_content, _no_docstring)
 
     def add_directive_header(self, sig):
         # type: (unicode) -> None
@@ -96,15 +105,11 @@ class MyAttributeDocumenter(AttributeDocumenter):
         if not self.options.annotation:
             if not self._datadescriptor:
                 try:
-                    print(1)
                     objrepr = object_description(self.object)
                 except ValueError:
-                    print(2)
                     pass
                 else:
-                    print(3)
-                    pass
-                    #self.add_line(u'   :annotation: = ' + objrepr, sourcename)  # This is it!!!
+                    self.add_line(u'   :annotation: = ' + objrepr, sourcename)  # This is it!!!
         elif self.options.annotation is SUPPRESS:
             print(4)
             pass
@@ -112,3 +117,26 @@ class MyAttributeDocumenter(AttributeDocumenter):
             print(5)
             self.add_line(u'   :annotation: %s' % self.options.annotation,
                           sourcename)
+
+
+    def get_doc(self, encoding=None, ignore=1):
+        # type: (unicode, int) -> List[List[unicode]]
+        """Decode and return lines of the docstring(s) for the object."""
+        docstring = self.get_attr(self.object, '__doc__', None)
+
+        print(f'type is... {type(self.object)}')
+        if isinstance(self.object, Column):
+            print('returning the original this!')
+            return [prepare_docstring('I am a column!', ignore)]
+
+        if docstring is None and self.env.config.autodoc_inherit_docstrings:
+            docstring = getdoc(self.object)
+        # make sure we have Unicode docstrings, then sanitize and split
+        # into lines
+        if isinstance(docstring, text_type):
+            return [prepare_docstring(docstring, ignore)]
+        elif isinstance(docstring, str):  # this will not trigger on Py3
+            return [prepare_docstring(force_decode(docstring, encoding),
+                                      ignore)]
+        # ... else it is something strange, let's ignore it
+        return []
