@@ -35,7 +35,7 @@ class RoadCenterline(Base, ModelMixin):
             label='Source Full Name',
             requirement=Requirement.REQUESTED
         )
-    )
+    )  #: here is an annotation!
 
     addRngPreL = column(
         String,

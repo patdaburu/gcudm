@@ -12,15 +12,15 @@
 Data Model
 ----------
 
+
+
+
+
 .. automodule:: gcudm.models.road_centerlines
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. automodule:: gcudm.models.esbems
-
-.. automodule:: gcudm.models.esbfire
-
-.. automodule:: gcudm.models.esblaw
-
-.. automodule:: gcudm.models.esbpsap
 
 
 

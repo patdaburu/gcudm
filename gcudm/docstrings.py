@@ -253,10 +253,12 @@ def model(label: str):
         if not hasattr(cls, '__label__'):
             # ...update it now.
             cls.__label__ = label
-        # If we're doing a documentation run...
-        if Modes().sphinx:
-            # ...update the docstrings.
-            docstring(cls)
+        # Tag the class as an ORM model class.
+        cls.__is_model_cls__ = True
+        # # If we're doing a documentation run...
+        # if Modes().sphinx:
+        #     # ...update the docstrings.
+        #     docstring(cls)
         # return the original class to the caller.
         return cls
 
