@@ -70,14 +70,8 @@ def setup(app):
 
 class MyClassDocumenter(ClassDocumenter):
 
-    @classmethod
-    def can_document_member(cls, member, membername, isattr, parent):
-        if hasattr(member, '__is_model_cls__'):
-            print(f"****{membername}")
-            return True
-        else:
-            print(f'NOT {membername}')
-            return False
+    pass
+
 
 
 from sphinx.util.inspect import object_description, getdoc
@@ -126,6 +120,9 @@ class MyAttributeDocumenter(AttributeDocumenter):
         # type: (unicode, int) -> List[List[unicode]]
         """Decode and return lines of the docstring(s) for the object."""
 
+
+        # TODO: The inherited members aren't being handled!!!
+
         if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):
 
             meta = self.object.__meta__
@@ -134,31 +131,12 @@ class MyAttributeDocumenter(AttributeDocumenter):
             # GARBANZO BEANS
             #meta = self.get_attr(self.object, '__meta__', None)
             rst = model_rst_formatter.col2section(meta)   # TODO: Don't use '__meta__' string!
-            return[prepare_docstring(rst, 0)]
+            return[prepare_docstring(rst, 0)]  # don't ignore it!
 
-        # if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):
-        #
-        #     meta = self.object.__meta__
-        #     print(f'the label is {meta.label}')
-        #
-        #     # GARBANZO BEANS
-        #     #meta = self.get_attr(self.object, '__meta__', None)
-        #     rst = model_rst_formatter.col2section(meta)   # TODO: Don't use '__meta__' string!
-        #
-        #     return[prepare_docstring(rst, ignore)]
+
 
 
         docstring = self.get_attr(self.object, '__doc__', None)
-
-
-#        print(f'self.object is a(n) {type(self.object)}')
-#        print(f"does it have meta?  {hasattr(self.object, '__meta__')}")
-
-
-
-            #print('returning the original this!')
-            #return [prepare_docstring('I am a column!', ignore)]
-
         if docstring is None and self.env.config.autodoc_inherit_docstrings:
             docstring = getdoc(self.object)
         # make sure we have Unicode docstrings, then sanitize and split
