@@ -9,8 +9,11 @@
 This module contains utilities for setting up docstrings
 """
 
-from .meta import ColumnMeta, COLUMN_META_ATTR, Usage, Requirement
-from .modes import Modes
+from .meta import (
+    ColumnMeta, COLUMN_META_ATTR,
+    TableMeta, TABLE_META_ATTR,
+    Usage, Requirement
+)
 import inspect
 from sqlalchemy import Column
 import sys
@@ -243,41 +246,41 @@ def model(label: str):
 
     :param label: the friendly label for the class
     """
-    def docstring(cls):
-        # We'll need a docstring formatter for this job.
-        docstring_formatter = ModelRstFormatter()
-        # Get the class' module.
-        mod = sys.modules[cls.__module__]
-        mod.__doc__ = docstring_formatter.cls2rst(
-            cls=cls, heading=label, preamble=mod.__doc__)
-        # Return the class.
-        return cls
 
     def modelify(cls):
+        """
+        This inner function updates the model class.
+
+        :param cls: the decorated class
+        :return: the original class
+        """
         # If the label parameter hasn't already been specified...
-        if not hasattr(cls, '__label__'):
+        if not hasattr(cls, TABLE_META_ATTR):
             # ...update it now.
-            cls.__label__ = label
-        # Tag the class as an ORM model class.
-        # cls.__is_model_cls__ = True
+            setattr(cls, TABLE_META_ATTR, TableMeta(label=label))
 
-
-        # for mro in inspect.getmro(cls):
-        #     # ...updating our list with information about all the members.
-        #     column_members.extend(
-        #         [
-        #             member for member in inspect.getmembers(mro)
-        #             if hasattr(member[1], COLUMN_META_ATTR)
-        #         ]
-        #     )
-
-
-
-        # # If we're doing a documentation run...
-        # if Modes().sphinx:
-        #     # ...update the docstrings.
-        #     docstring(cls)
-        # return the original class to the caller.
+        # Let's go through every class in the hierarchy...
+        for mro in inspect.getmro(cls):
+            for name, obj in inspect.getmembers(mro):
+                # If this attribute:
+                #   1) has the same name as an attribute of the current class;
+                #   2) is a Column; and
+                #   3) has a 'meta' attribute...
+                if (
+                        hasattr(cls, name) and
+                        isinstance(obj, Column) and
+                        hasattr(obj, COLUMN_META_ATTR)
+                ):
+                    # ...we need to take a closer look at it.
+                    column: Column = getattr(cls, name)
+                    # If this class' own attribute is missing the 'meta'
+                    # information...
+                    if not hasattr(column, COLUMN_META_ATTR):
+                        # ...copy it from the parent class.
+                        setattr(column,
+                                COLUMN_META_ATTR,
+                                getattr(obj, COLUMN_META_ATTR))
+        # Return the original class.
         return cls
 
     # Return the inner function.

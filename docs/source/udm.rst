@@ -21,6 +21,7 @@ Road Centerlines
     :members:
     :undoc-members:
     :show-inheritance:
+    :inherited-members:
 
 Emergency Service Boundaries (EMS)
 ----------------------------------
@@ -29,6 +30,7 @@ Emergency Service Boundaries (EMS)
     :members:
     :undoc-members:
     :show-inheritance:
+    :inherited-members:
 
 Emergency Service Boundaries (Fire)
 -----------------------------------
@@ -37,6 +39,7 @@ Emergency Service Boundaries (Fire)
     :members:
     :undoc-members:
     :show-inheritance:
+    :inherited-members:
 
 
 Emergency Service Boundaries (Law)
@@ -45,6 +48,7 @@ Emergency Service Boundaries (Law)
     :members:
     :undoc-members:
     :show-inheritance:
+    :inherited-members:
 
 
 Emergency Service Boundaries (PSAP)
@@ -53,6 +57,7 @@ Emergency Service Boundaries (PSAP)
     :members:
     :undoc-members:
     :show-inheritance:
+    :inherited-members:
 
 
 
