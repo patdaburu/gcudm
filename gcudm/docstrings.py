@@ -259,7 +259,20 @@ def model(label: str):
             # ...update it now.
             cls.__label__ = label
         # Tag the class as an ORM model class.
-        cls.__is_model_cls__ = True
+        # cls.__is_model_cls__ = True
+
+
+        # for mro in inspect.getmro(cls):
+        #     # ...updating our list with information about all the members.
+        #     column_members.extend(
+        #         [
+        #             member for member in inspect.getmembers(mro)
+        #             if hasattr(member[1], COLUMN_META_ATTR)
+        #         ]
+        #     )
+
+
+
         # # If we're doing a documentation run...
         # if Modes().sphinx:
         #     # ...update the docstrings.
