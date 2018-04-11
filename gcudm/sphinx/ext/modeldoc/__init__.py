@@ -70,7 +70,55 @@ def setup(app):
 
 class MyClassDocumenter(ClassDocumenter):
 
-    pass
+    def get_doc(self, encoding=None, ignore=1):
+
+        # type: (unicode, int) -> List[List[unicode]]
+        lines = getattr(self, '_new_docstrings', None)
+        if lines is not None:
+            return lines
+
+        content = self.env.config.autoclass_content
+
+        docstrings = []
+        attrdocstring = self.get_attr(self.object, '__doc__', None)
+        if attrdocstring:
+            docstrings.append(attrdocstring)
+
+        # for classes, what the "docstring" is can be controlled via a
+        # config value; the default is only the class docstring
+        if content in ('both', 'init'):
+            initdocstring = self.get_attr(
+                self.get_attr(self.object, '__init__', None), '__doc__')
+            # for new-style classes, no __init__ means default __init__
+            if (initdocstring is not None and
+                (initdocstring == object.__init__.__doc__ or  # for pypy
+                 initdocstring.strip() == object.__init__.__doc__)):  # for !pypy
+                initdocstring = None
+            if not initdocstring:
+                # try __new__
+                initdocstring = self.get_attr(
+                    self.get_attr(self.object, '__new__', None), '__doc__')
+                # for new-style classes, no __new__ means default __new__
+                if (initdocstring is not None and
+                    (initdocstring == object.__new__.__doc__ or  # for pypy
+                     initdocstring.strip() == object.__new__.__doc__)):  # for !pypy
+                    initdocstring = None
+            if initdocstring:
+                if content == 'init':
+                    docstrings = [initdocstring]
+                else:
+                    docstrings.append(initdocstring)
+        doc = []
+        for docstring in docstrings:
+            if isinstance(docstring, text_type):
+                doc.append(prepare_docstring(docstring, ignore))
+            elif isinstance(docstring, str):  # this will not trigger on Py3
+                doc.append(prepare_docstring(force_decode(docstring, encoding),
+                                             ignore))
+
+        print(doc)
+
+        return doc
 
 
 
@@ -88,7 +136,7 @@ class MyAttributeDocumenter(AttributeDocumenter):
 #        print(f'self.object is a(n) {type(self.object)}')
 #        print(f"does it have meta?  {hasattr(self.object, '__meta__')}")
         if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):  #: TODO Get the __meta__ from the property!
-            print('no_docstring=False')
+#            print('no_docstring=False')
             _no_docstring = False
         elif not self._datadescriptor:
             # if it's not a data descriptor, its docstring is very probably the
@@ -100,7 +148,7 @@ class MyAttributeDocumenter(AttributeDocumenter):
         # type: (unicode) -> None
         ClassLevelDocumenter.add_directive_header(self, sig)
         sourcename = self.get_sourcename()
-        print(sourcename)
+#        print(sourcename)
         if not self.options.annotation:
             if not self._datadescriptor:
                 try:
@@ -126,7 +174,7 @@ class MyAttributeDocumenter(AttributeDocumenter):
         if isinstance(self.object, Column) and hasattr(self.object, '__meta__'):
 
             meta = self.object.__meta__
-            print(f'the label is {meta.label}')
+#            print(f'the label is {meta.label}')
 
             # GARBANZO BEANS
             #meta = self.get_attr(self.object, '__meta__', None)

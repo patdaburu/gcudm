@@ -143,7 +143,7 @@ class ModelRstFormatter(object):
         # break!!!!
         # break!
         col_img_sub = str(uuid.uuid4())
-        col_img_sub = col_img_sub.replace('-', '')
+        #col_img_sub = col_img_sub.replace('-', '')
         lines = [
             self.format_line(f'.. |{col_img_sub}| image:: _static/images/column.svg', wrap=False),
             self.format_line(':width: 24px', wrap=False, indent=2),
@@ -173,7 +173,6 @@ class ModelRstFormatter(object):
         lines.append('')
         # Put it all together.
         rst = '\n'.join(lines)
-        print(rst)
         # Congratulations, we have a formatted reStructuredText string.
         return rst
 
