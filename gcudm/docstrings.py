@@ -19,6 +19,7 @@ from sqlalchemy import Column
 import sys
 from titlecase import titlecase
 from typing import Any, List, Set, Tuple, Type, Union
+import uuid
 
 
 class ModelRstFormatter(object):
@@ -116,10 +117,7 @@ class ModelRstFormatter(object):
         rst = '\n'.join(lines)
         return rst  # ...that's that.
 
-    def col2section(self,
-                    #table_name: str,
-                    #column_name: str,
-                    meta: ColumnMeta) -> str:
+    def col2section(self, meta: ColumnMeta) -> str:
         """
         Format a block of reStructuredText to represent a column.
 
@@ -144,10 +142,17 @@ class ModelRstFormatter(object):
 
         # break!!!!
         # break!
-        lines = []
+        col_img_sub = str(uuid.uuid4())
+        col_img_sub = col_img_sub.replace('-', '')
+        lines = [
+            self.format_line(f'.. |{col_img_sub}| image:: _static/images/column.svg', wrap=False),
+            self.format_line(':width: 24px', wrap=False, indent=2),
+            self.format_line(':height: 24px', indent=2),
+            ''
+        ]  # TODO: Clean this up, a lot!  Create a LineFormatter() class.
 
         # Add the label.
-        lines.append(self.format_line(f'**{meta.label}** - ', wrap=False))
+        lines.append(self.format_line(f'|{col_img_sub}| **{meta.label}** - ', wrap=False))
         # Add the description.
         lines.append(self.format_line(self.simplify_docstring(meta.description)))
         # Add the table of Usage values.
@@ -168,6 +173,7 @@ class ModelRstFormatter(object):
         lines.append('')
         # Put it all together.
         rst = '\n'.join(lines)
+        print(rst)
         # Congratulations, we have a formatted reStructuredText string.
         return rst
 
