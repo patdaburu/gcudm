@@ -176,7 +176,7 @@ class ModelRstFormatter(object):
         # Congratulations, we have a formatted reStructuredText string.
         return rst
 
-    def cls2rst(self, cls, heading: str, preamble: str=None):
+    def cls2rst(self, obj):  #, heading: str, preamble: str=None):
         """
         Create a docstring for a model class.
 
@@ -186,63 +186,76 @@ class ModelRstFormatter(object):
         :return: a reStructuredText docstring
         """
         lines = ['']
-        # If a preamble was supplied...
-        if preamble is not None:
-            # ...add it to the top.
-            lines.append(preamble)
         # Figure out what we're going to call the in-line table image.
-        tbl_img_sub = f'img_tbl_{cls.__name__}'
+        tbl_img_sub = f'img_tbl_{obj.__class__.__name__}'
         # Define the in-line table image.
         lines.append(f'.. |{tbl_img_sub}| image:: _static/images/table.svg')
-        lines.append(self.format_line(':width: 24px', wrap=False))
-        lines.append(self.format_line(':height: 24px', wrap=False))
+        lines.append('\n\n')
+        lines.append(self.format_line(':width: 24px', wrap=True))
+        lines.append(self.format_line(':height: 24px', wrap=True))
         # We need a couple of blank lines.
         lines.append('')
         lines.append('')
-        # Create the heading.
-        table_name_header = f'|{tbl_img_sub}| {heading}'
-        lines.append('-' * len(table_name_header))
-        lines.append(table_name_header)
-        lines.append('-' * len(table_name_header))
+
+        # # Create the heading.
+        # table_name_header = f'|{tbl_img_sub}| {heading}'
+        # lines.append('-' * len(table_name_header))
+        # lines.append(table_name_header)
+        # lines.append('-' * len(table_name_header))
         # If the class has it's own docstring...
-        if cls.__doc__ is not None:
-            # ...append it now.
-            lines.append(cls.__doc__)
-            lines.append('')
+
+        # Append the table image to the original docstring.
+        lines.append(f"|{tbl_img_sub}| {obj.__doc__ or ''}")
+
+
+
+        #
+        # if cls.__doc__ is not None:
+        #     # ...append it now.
+        #     lines.append(object.__doc__)
+        #     lines.append('')
+
         # Now add the values.
-        lines.append(self.format_line(f':Table Name: {cls.__tablename__}'))
-        lines.append(self.format_line(f':Geometry Type: {cls.geometry_type()}'))
-        lines.append('')  # We need a blank line.
-        # We're going to go find all the members within the class hierarchy that
-        # seem to be columns with metadata.
-        column_members: List[Tuple[str, Column]] = []
-        # Let's go through every class in the hierarchy...
-        for mro in inspect.getmro(cls):
-            # ...updating our list with information about all the members.
-            column_members.extend(
-                [
-                    member for member in inspect.getmembers(mro)
-                    if hasattr(member[1], COLUMN_META_ATTR)
-                ]
-            )
-        # Eliminate duplicates.
-        column_members = list(set(column_members))
-        column_members.sort(key=lambda i: i[0])
-        # Create the RST documentation for all the column members.
-        cm_docstrings = [
-            self.col2section(
-                table_name=cls.__tablename__,
-                column_name=cm[0],
-                meta=cm[1].__meta__)
-            for cm in column_members
-        ]
-        cm_docstring = '\n'.join(cm_docstrings)
-        # Add the collected docstrings for the tables.
-        lines.append(cm_docstring)
-        # Put it all together...
-        rst = '\n'.join(lines)
-        # ...and that's a block of reStructuredText.
-        return rst
+        lines.append(self.format_line(f':Table Name: {obj.__tablename__}'))
+        lines.append(self.format_line(f':Geometry Type: {obj.geometry_type()}'))
+
+
+        # lines.append('')  # We need a blank line.
+        # # We're going to go find all the members within the class hierarchy that
+        # # seem to be columns with metadata.
+        # column_members: List[Tuple[str, Column]] = []
+        # # Let's go through every class in the hierarchy...
+        # for mro in inspect.getmro(cls):
+        #     # ...updating our list with information about all the members.
+        #     column_members.extend(
+        #         [
+        #             member for member in inspect.getmembers(mro)
+        #             if hasattr(member[1], COLUMN_META_ATTR)
+        #         ]
+        #     )
+        # # Eliminate duplicates.
+        # column_members = list(set(column_members))
+        # column_members.sort(key=lambda i: i[0])
+        # # Create the RST documentation for all the column members.
+        # cm_docstrings = [
+        #     self.col2section(
+        #         table_name=cls.__tablename__,
+        #         column_name=cm[0],
+        #         meta=cm[1].__meta__)
+        #     for cm in column_members
+        # ]
+        # cm_docstring = '\n'.join(cm_docstrings)
+        # # Add the collected docstrings for the tables.
+        # lines.append(cm_docstring)
+
+
+        return lines
+
+
+        # # Put it all together...
+        # rst = '\n'.join(lines)
+        # # ...and that's a block of reStructuredText.
+        # return rst
 
 
 

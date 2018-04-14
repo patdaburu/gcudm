@@ -40,6 +40,7 @@ sys.path.insert(0, _pysrc)
 import gcudm
 from gcudm.modes import Modes
 import gcudm.sphinx.ext.modeldoc
+#import gcudm.modeldoc  # noqa
 
 # Indicate that this is a documentation run.
 Modes().sphinx = True
@@ -99,10 +100,16 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    #'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'gcudm.sphinx.ext.modeldoc'
+]
+
+# The extension to autodoc re-registers some directives.  To avoid a warning,
+# we need to suppress it.
+suppress_warnings = [
+    'app.add_directive'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

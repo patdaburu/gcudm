@@ -18,6 +18,8 @@ _SKIP_ON_LOAD = [
 
 ]  #: the names of modules that are not loaded automatically with the model
 
+IS_MODEL_CLASS = '__model_cls__'  #: signifies a model class
+
 
 def model(label: str):
     """
@@ -33,6 +35,8 @@ def model(label: str):
         :param cls: the decorated class
         :return: the original class
         """
+        # In all cases, flag the class as a 'model' class.
+        setattr(cls, IS_MODEL_CLASS, True)
         # If the label parameter hasn't already been specified...
         if not hasattr(cls, TABLE_META_ATTR):
             # ...update it now.
@@ -45,11 +49,9 @@ def model(label: str):
                 #   1) has the same name as an attribute of the current class;
                 #   2) is a Column; and
                 #   3) has a 'meta' attribute...
-                if (
-                        hasattr(cls, name) and
+                if (hasattr(cls, name) and
                         isinstance(obj, Column) and
-                        hasattr(obj, COLUMN_META_ATTR)
-                ):
+                        hasattr(obj, COLUMN_META_ATTR)):
                     # ...we need to take a closer look at it.
                     column: Column = getattr(cls, name)
                     # If this class' own attribute is missing the 'meta'
