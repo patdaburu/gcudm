@@ -9,24 +9,13 @@
 The GeoAlchemy declarative base for the data model is defined in this module
 along with some other helpful classes.
 """
-from .modes import Modes
 from .meta import column, ColumnMeta, Requirement
 from .types import GUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import String, DateTime
 
 
-class Base(object):
-    """
-    This is the declarative base class for SQLAlchemy and GeoAlchemy objects.
-    """
-    pass
-
-
-# If we aren't running in "Sphinx" mode to generate documentation...
-if not Modes().sphinx:
-    # ...we want an actual declarative base.
-    Base = declarative_base()  #: This is the model's declarative base.
+Base = declarative_base()  #: This is the model's declarative base.
 
 
 class ModelMixin(object):

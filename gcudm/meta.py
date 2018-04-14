@@ -3,7 +3,7 @@
 
 # Created by pat on 4/4/18
 """
-.. currentmodule:: meta
+.. currentmodule:: gcudm.meta
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
 This module contains metadata objects to help with inline documentation of the
@@ -15,7 +15,8 @@ from sqlalchemy import Column
 from typing import Any, NamedTuple, Type, Union
 
 
-COLUMN_META_ATTR = '__meta__'  #: the property that contains metadata
+COLUMN_META_ATTR = '__meta__'  #: the property that contains column metadata
+TABLE_META_ATTR = '__meta__'  #: the property that contains table metadata
 
 
 class Requirement(IntFlag):
@@ -34,6 +35,13 @@ class Usage(IntFlag):
     NONE = 0  #: The data is not used.
     SEARCH = 1  #: The data is used for searching.
     DISPLAY = 2  #: The data is displayed to users.
+
+
+class TableMeta(NamedTuple):
+    """
+    Metadata for tables.
+    """
+    label: str = None  #: the friendly label for the table
 
 
 class ColumnMeta(NamedTuple):
@@ -65,14 +73,6 @@ class ColumnMeta(NamedTuple):
         else:
             return None
 
-        # try:
-        #     return {
-        #         Requirement: lambda: self.requirement,
-        #         Usage: lambda: self.usage
-        #     }[enum_cls]()
-        # except KeyError:
-        #     return None
-
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
     """
@@ -85,5 +85,7 @@ def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
     c = Column(dtype, *args, **kwargs)
     c.__dict__[COLUMN_META_ATTR] = meta
     return c
+
+
 
 

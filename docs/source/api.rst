@@ -28,14 +28,6 @@ gcudm.base
     :undoc-members:
     :show-inheritance:
 
-----------------
-gcudm.docstrings
-----------------
-.. automodule:: gcudm.docstrings
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ----------
 gcudm.meta
 ----------
@@ -52,13 +44,6 @@ gcudm.model
     :undoc-members:
     :show-inheritance:
 
------------
-gcudm.modes
------------
-.. automodule:: gcudm.modes
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 -----------
 gcudm.types

@@ -10,7 +10,7 @@ Say something descriptive about the 'esbfire' module.
 """
 
 from .esbs import EsbMixin
-from ..docstrings import model
+from ..model import model
 from ..base import Base, ModelMixin
 
 

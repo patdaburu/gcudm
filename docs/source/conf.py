@@ -21,6 +21,8 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import sphinx_rtd_theme
+import sys
+from unittest.mock import MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -38,10 +40,6 @@ _pysrc = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..
 sys.path.insert(0, _pysrc)
 # Now we can import local modules.
 import gcudm
-from gcudm.modes import Modes
-
-# Indicate that this is a documentation run.
-Modes().sphinx = True
 
 
 # -- Document __init__ methods by default. --------------------------------
@@ -49,12 +47,7 @@ Modes().sphinx = True
 # You can comment this section out to go back to the default behavior.
 # See: http://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
 
-from sqlalchemy.orm.attributes import InstrumentedAttribute
 def skip(app, what, name, obj, skip, options):
-    # if hasattr(obj, COLUMN_META_ATTR):
-    #     return True
-    # if isinstance(obj, InstrumentedAttribute):
-    #     return True
     # Skip constructors.
     if name == "__init__":
         return True
@@ -66,8 +59,6 @@ def setup(app):
 
 # http://docs.readthedocs.io/en/latest/faq.html
 
-import sys
-from unittest.mock import MagicMock
 
 class Mock(MagicMock):
     @classmethod
@@ -97,9 +88,18 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
+extensions = [
+    'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages']
+    'sphinx.ext.githubpages',
+    'gcudm.sphinx.ext.modeldoc'
+]
+
+# The extension to autodoc re-registers some directives.  To avoid a warning,
+# we need to suppress it.
+suppress_warnings = [
+    'app.add_directive'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

@@ -11,7 +11,7 @@
 
 """
 
-from ..docstrings import model
+from ..model import model
 from ..meta import column, ColumnMeta, Requirement, Usage
 from ..base import Base, ModelMixin
 from sqlalchemy import Column, Integer, String, DateTime
@@ -35,7 +35,7 @@ class RoadCenterline(Base, ModelMixin):
             label='Source Full Name',
             requirement=Requirement.REQUESTED
         )
-    )
+    )  #: here is an annotation!
 
     addRngPreL = column(
         String,
