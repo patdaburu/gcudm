@@ -3,7 +3,7 @@
 
 # Created by pat on 4/4/18
 """
-.. currentmodule:: meta
+.. currentmodule:: gcudm.meta
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
 This module contains metadata objects to help with inline documentation of the
@@ -72,14 +72,6 @@ class ColumnMeta(NamedTuple):
             return self.usage
         else:
             return None
-
-        # try:
-        #     return {
-        #         Requirement: lambda: self.requirement,
-        #         Usage: lambda: self.usage
-        #     }[enum_cls]()
-        # except KeyError:
-        #     return None
 
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:

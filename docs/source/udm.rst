@@ -4,28 +4,13 @@
     :glob:
 
 .. image:: _static/images/logo.svg
-   :width: 150px
+   :width: 80px
    :alt: gcudm
    :align: right
 
-----------
+==========
 Data Model
-----------
-
-.. py:class:: OoobyFlooby
-
-    .. |img_tbl_fec13acaaa2a4fb29786c564162a7425| image:: _static/images/table.svg
-        :width: 24px
-        :height: 24px
-
-    |img_tbl_fec13acaaa2a4fb29786c564162a7425| Boy, howdy!
-
-
-
-
-    .. py:attribute:: DoobyDoo
-
-
+==========
 
 
 Road Centerlines

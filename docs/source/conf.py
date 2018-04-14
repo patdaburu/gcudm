@@ -21,6 +21,8 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import sphinx_rtd_theme
+import sys
+from unittest.mock import MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -38,12 +40,6 @@ _pysrc = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..
 sys.path.insert(0, _pysrc)
 # Now we can import local modules.
 import gcudm
-from gcudm.modes import Modes
-import gcudm.sphinx.ext.modeldoc
-#import gcudm.modeldoc  # noqa
-
-# Indicate that this is a documentation run.
-Modes().sphinx = True
 
 
 # -- Document __init__ methods by default. --------------------------------
@@ -51,12 +47,7 @@ Modes().sphinx = True
 # You can comment this section out to go back to the default behavior.
 # See: http://stackoverflow.com/questions/5599254/how-to-use-sphinxs-autodoc-to-document-a-classs-init-self-method
 
-from sqlalchemy.orm.attributes import InstrumentedAttribute
 def skip(app, what, name, obj, skip, options):
-    # if hasattr(obj, COLUMN_META_ATTR):
-    #     return True
-    # if isinstance(obj, InstrumentedAttribute):
-    #     return True
     # Skip constructors.
     if name == "__init__":
         return True
@@ -68,8 +59,6 @@ def setup(app):
 
 # http://docs.readthedocs.io/en/latest/faq.html
 
-import sys
-from unittest.mock import MagicMock
 
 class Mock(MagicMock):
     @classmethod
