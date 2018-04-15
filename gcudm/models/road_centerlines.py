@@ -27,7 +27,7 @@ class RoadCenterline(Base, ModelMixin):
 
     __tablename__ = 'road_centerlines'
 
-    geom = Column(Geometry('LINESTRING'))
+    geometry = Column(Geometry('LINESTRING'))
 
     srcFullNam = column(
         String,

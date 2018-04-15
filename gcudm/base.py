@@ -9,6 +9,7 @@
 The GeoAlchemy declarative base for the data model is defined in this module
 along with some other helpful classes.
 """
+from .geometry import GeometryTypes
 from .meta import column, ColumnMeta, Requirement
 from .types import GUID
 from sqlalchemy.ext.declarative import declarative_base
@@ -19,6 +20,9 @@ Base = declarative_base()  #: This is the model's declarative base.
 
 
 class ModelMixin(object):
+
+    __geoattr__ = 'geometry'  #: the name of the geometry column attribute
+
     """
     This is the parent class for all entity classes in the model.  It defines
     common fields.
@@ -88,5 +92,14 @@ class ModelMixin(object):
 
     @classmethod
     def geometry_type(cls):
-        return 'LINESTRING'  # TODO: Retrieve the geometry type.
+        try:
+            # Get the string that identifies the geometry type.
+            gt_str = cls.__table__.c[cls.__geoattr__].type.geometry_type
+            # The string should correspond to one of the supported types.
+            gt = GeometryTypes[gt_str]
+            # Return that value.
+            return gt
+        except KeyError:
+            # TODO: Log this!
+            return GeometryTypes.NONE
 
