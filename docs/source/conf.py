@@ -54,8 +54,33 @@ def skip(app, what, name, obj, skip, options):
     return skip
 
 
+# -- Handle NamedTuple members. --------------------------------
+# namedtuples are awesome. Unfortunately, if you find yourself with a large one,
+# and you use Sphinx for documentation you’re going to find yourself with a
+# gigantic part of your documentation documenting members as 'Alias for
+# field...'
+# See: https://chrisdown.name/2015/09/20/removing-namedtuple-docstrings-from-sphinx.html
+
+def no_namedtuple_attrib_docstring(app, what, name,
+                                   obj, options, lines):
+    is_namedtuple_docstring = (
+        len(lines) > 0 and
+        lines[0].startswith('Alias for field number')
+    )
+    if is_namedtuple_docstring:
+        # We don't return, so we need to purge in-place
+        del lines[:]
+
+
 def setup(app):
     app.connect("autodoc-skip-member", skip)
+    app.connect(
+        'autodoc-process-docstring',
+        no_namedtuple_attrib_docstring,
+    )
+
+# ivar cross references
+# https://stackoverflow.com/questions/31784830/sphinx-ivar-tag-goes-looking-for-cross-references
 
 # http://docs.readthedocs.io/en/latest/faq.html
 
