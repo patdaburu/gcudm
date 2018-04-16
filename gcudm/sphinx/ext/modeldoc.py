@@ -11,6 +11,7 @@ documentation for model classes.
 """
 
 
+from ...base import ModelMixin
 from ...model import IS_MODEL_CLASS
 from ...meta import (
     ColumnMeta, COLUMN_META_ATTR, TABLE_META_ATTR, Requirement, Usage
@@ -22,7 +23,7 @@ from sphinx.util.docstrings import prepare_docstring
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from titlecase import titlecase
-from typing import Any, Set, Type, Union
+from typing import Any, cast, Set, Type, Union
 import uuid
 
 
@@ -53,20 +54,46 @@ class ModelClassDocumenter(ClassDocumenter):
         # docstring.
         img_sub = str(uuid.uuid4()).replace('-', '')
         lines = [[
-            f".. |{img_sub}| image:: _static/images/table.svg",
+            f".. |{img_sub}_tbl| image:: _static/images/table.svg",
             '    :width: 24px',
             '    :height: 24px',
-            '',
-            f"|{img_sub}|",
+            ''
+        ]]
+        geom_markup: bool = False
+        # Try to add the geometry type image.
+        try:
+            gtype = cast(ModelMixin, self.object).geometry_type()
+            gtype_file = gtype.name.lower()
+            lines[0].extend([
+                f".. |{img_sub}_geom| image:: _static/images/{gtype_file}.svg",
+                '    :width: 24px',
+                '    :height: 24px',
+                ''
+            ])
+            # We have geometry markup!
+            geom_markup = True
+        except KeyError:
+            print("YYYYAAAARGHHHHH!!!")  #TODO: Improve handling!
+
+        img_line = (
+            f"|{img_sub}_tbl| |{img_sub}_geom|" if geom_markup
+            else f"|{img_sub}_tbl|"
+        )
+
+        # Add the table image, along with (possibly) the geometry image and
+        # the title.
+        lines[0].extend([
+            img_line,
             self.object.__doc__ or '', '',
             f':Table Name: {self.object.__tablename__}', ''
-        ]]
+        ])
+
         # If the table has a geometry...
         geom_type = self.object.geometry_type()
         if geom_type is not None:
             # ...indicate the geometry type in the document.
             lines[0].extend([
-                f':Geometry Type: {self.object.geometry_type()}', ''
+                f':Geometry Type: {titlecase(self.object.geometry_type().name)}', ''
             ])
         # Return whatever we have.
         return lines
