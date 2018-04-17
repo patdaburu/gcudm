@@ -9,7 +9,10 @@ build:
 freeze:
 	pip freeze > requirements.txt
 
-test:
+lint:
+	pylint $(PROJ_NAME)
+
+test: lint
 	py.test --cov . tests/
 
 coverage: test
