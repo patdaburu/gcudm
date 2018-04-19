@@ -11,8 +11,8 @@ model.
 """
 
 from enum import IntFlag
-from sqlalchemy import Column
 from typing import Any, NamedTuple, Type, Union
+from sqlalchemy import Column
 
 
 COLUMN_META_ATTR = '__meta__'  #: the property that contains column metadata
@@ -89,8 +89,7 @@ class ColumnMeta(NamedTuple):
             return self.requirement
         elif enum_cls == Usage:
             return self.usage
-        else:
-            return None
+        return None
 
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
@@ -101,10 +100,6 @@ def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
     :param meta: the meta data
     :return: a GeoAlchemy :py:class:`Column`
     """
-    c = Column(dtype, *args, **kwargs)
-    c.__dict__[COLUMN_META_ATTR] = meta
-    return c
-
-
-
-
+    col = Column(dtype, *args, **kwargs)
+    col.__dict__[COLUMN_META_ATTR] = meta
+    return col

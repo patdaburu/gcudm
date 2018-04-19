@@ -10,7 +10,7 @@ This module contains a Sphinx extension that can be used to generate specialized
 documentation for model classes.
 """
 
-
+from .monkeypatch import monkeypatch
 from ...base import ModelMixin
 from ...model import IS_MODEL_CLASS
 from ...meta import (
@@ -19,6 +19,7 @@ from ...meta import (
 from sphinx.ext.autodoc import (
     ClassLevelDocumenter, AttributeDocumenter, ClassDocumenter
 )
+import logging
 from sphinx.util.docstrings import prepare_docstring
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.orm.attributes import InstrumentedAttribute
@@ -27,10 +28,19 @@ from typing import Any, cast, Set, Type, Union
 import uuid
 
 
+# Apply monkeypatches.
+monkeypatch()
+
+
 __version__ = '0.0.1'  #: the version of this Sphinx extension
 
 
 def setup(app):
+    """
+    Set up the Sphinx extension.
+
+    :param app: the Sphinx environment.
+    """
     # type: (Sphinx) -> Dict[unicode, Any]
     app.add_autodocumenter(ModelClassDocumenter)
     app.add_autodocumenter(ColumnAttributeDocumenter)
@@ -73,8 +83,9 @@ class ModelClassDocumenter(ClassDocumenter):
             # We have geometry markup!
             geom_markup = True
         except KeyError:
-            print("YYYYAAAARGHHHHH!!!")  #TODO: Improve handling!
-
+            logging.exception()
+        # Create the line that defines the image that will appear before the
+        # rest of the documentation.
         img_line = (
             f"|{img_sub}_tbl| |{img_sub}_geom|" if geom_markup
             else f"|{img_sub}_tbl|"
@@ -224,3 +235,49 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
         # Put it all together, and...
         rst = '\n'.join(lines)
         return rst  # ...that's that.
+
+
+
+
+# =========================
+
+from docutils import nodes
+from sphinx.util.docfields import TypedField
+from sphinx import addnodes
+
+def patched_make_field(self, types, domain, items, env=None):
+    # type: (List, unicode, Tuple) -> nodes.field
+    def handle_item(fieldarg, content):
+        par = nodes.paragraph()
+        par += addnodes.literal_strong('', fieldarg)  # Patch: this line added
+        #par.extend(self.make_xrefs(self.rolename, domain, fieldarg,
+        #                           addnodes.literal_strong))
+        if fieldarg in types:
+            par += nodes.Text(' (')
+            # NOTE: using .pop() here to prevent a single type node to be
+            # inserted twice into the doctree, which leads to
+            # inconsistencies later when references are resolved
+            fieldtype = types.pop(fieldarg)
+            if len(fieldtype) == 1 and isinstance(fieldtype[0], nodes.Text):
+                typename = u''.join(n.astext() for n in fieldtype)
+                par.extend(self.make_xrefs(self.typerolename, domain, typename,
+                                           addnodes.literal_emphasis))
+            else:
+                par += fieldtype
+            par += nodes.Text(')')
+        par += nodes.Text(' -- ')
+        par += content
+        return par
+
+    fieldname = nodes.field_name('', self.label)
+    if len(items) == 1 and self.can_collapse:
+        fieldarg, content = items[0]
+        bodynode = handle_item(fieldarg, content)
+    else:
+        bodynode = self.list_type()
+        for fieldarg, content in items:
+            bodynode += nodes.list_item('', handle_item(fieldarg, content))
+    fieldbody = nodes.field_body('', bodynode)
+    return nodes.field('', fieldname, fieldbody)
+
+TypedField.make_field = patched_make_field
