@@ -6,12 +6,11 @@
 .. currentmodule:: model
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-Say something descriptive about the 'model' module.
+This module contains general members to help you work with the model.
 """
-
-import gcudm.models
 import inspect
 import pkgutil
+import gcudm.models
 from .meta import Column, COLUMN_META_ATTR, TableMeta, TABLE_META_ATTR
 
 

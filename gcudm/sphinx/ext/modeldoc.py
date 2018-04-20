@@ -9,23 +9,22 @@
 This module contains a Sphinx extension that can be used to generate specialized
 documentation for model classes.
 """
-
+import logging
+import uuid
+from typing import Any, cast, Set, Type, Union
+from sphinx.ext.autodoc import (
+    ClassLevelDocumenter, AttributeDocumenter, ClassDocumenter
+)
+from sphinx.util.docstrings import prepare_docstring
+from sqlalchemy.sql.schema import Column
+from sqlalchemy.orm.attributes import InstrumentedAttribute
+from titlecase import titlecase
 from .monkeypatch import monkeypatch
 from ...base import ModelMixin
 from ...model import IS_MODEL_CLASS
 from ...meta import (
     ColumnMeta, COLUMN_META_ATTR, TABLE_META_ATTR, Requirement, Usage
 )
-from sphinx.ext.autodoc import (
-    ClassLevelDocumenter, AttributeDocumenter, ClassDocumenter
-)
-import logging
-from sphinx.util.docstrings import prepare_docstring
-from sqlalchemy.sql.schema import Column
-from sqlalchemy.orm.attributes import InstrumentedAttribute
-from titlecase import titlecase
-from typing import Any, cast, Set, Type, Union
-import uuid
 
 
 # Apply monkeypatches.
@@ -47,6 +46,7 @@ def setup(app):
     return {'version': __version__, 'parallel_read_safe': True}
 
 
+# pylint: disable=too-many-locals
 class ModelClassDocumenter(ClassDocumenter):
     """
     This is a specialized Documenter subclass for classes.  It overrides the
@@ -83,7 +83,9 @@ class ModelClassDocumenter(ClassDocumenter):
             # We have geometry markup!
             geom_markup = True
         except KeyError:
-            logging.exception()
+            logging.exception(
+                f'{type(self.object)} does not define a geometry.'
+            )
         # Create the line that defines the image that will appear before the
         # rest of the documentation.
         img_line = (
@@ -156,7 +158,7 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
                                     excluded={Usage.NONE}), '',
                 self.doc_enum_table(enum_cls=Requirement,
                                     meta=meta,
-                                    excluded={Requirement.REQUIRED}), ''
+                                    excluded={Requirement.NONE}), ''
             ]
             # If the meta-data indicates there is a related NENA field...
             if meta.nena is not None:
@@ -196,9 +198,9 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
         tbl_headers = [''] * len(vals)  # the table headers
         tbl_values = [''] * len(vals)  # the values
         # Let's look at each of the values.
-        for i in range(0, len(vals)):
+        for i, val in enumerate(vals):
             # We need the name.
-            enum_name = vals[i].name
+            enum_name = val.name
             # The character width of the column is the length of the name
             # plus one (1) padding space on each side.
             colwidth = (len(enum_name) + 2)
@@ -210,7 +212,7 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
             tbl_headers[i] = f' {titlecase(enum_name)} '
             # The yes-or-no indicator will only take up a single character,
             # but we need to pad it to maintain the fixed width.
-            xo = [' '] * colwidth
+            xo = [' '] * colwidth  # pylint: disable=invalid-name
             # Leaving one space on the left, put a yes-or-no indicator in
             # the column.  (We're using ASCII characters which we'll
             # replace in a moment.  For some reason, the extended characters
@@ -235,49 +237,3 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
         # Put it all together, and...
         rst = '\n'.join(lines)
         return rst  # ...that's that.
-
-
-
-
-# =========================
-
-from docutils import nodes
-from sphinx.util.docfields import TypedField
-from sphinx import addnodes
-
-def patched_make_field(self, types, domain, items, env=None):
-    # type: (List, unicode, Tuple) -> nodes.field
-    def handle_item(fieldarg, content):
-        par = nodes.paragraph()
-        par += addnodes.literal_strong('', fieldarg)  # Patch: this line added
-        #par.extend(self.make_xrefs(self.rolename, domain, fieldarg,
-        #                           addnodes.literal_strong))
-        if fieldarg in types:
-            par += nodes.Text(' (')
-            # NOTE: using .pop() here to prevent a single type node to be
-            # inserted twice into the doctree, which leads to
-            # inconsistencies later when references are resolved
-            fieldtype = types.pop(fieldarg)
-            if len(fieldtype) == 1 and isinstance(fieldtype[0], nodes.Text):
-                typename = u''.join(n.astext() for n in fieldtype)
-                par.extend(self.make_xrefs(self.typerolename, domain, typename,
-                                           addnodes.literal_emphasis))
-            else:
-                par += fieldtype
-            par += nodes.Text(')')
-        par += nodes.Text(' -- ')
-        par += content
-        return par
-
-    fieldname = nodes.field_name('', self.label)
-    if len(items) == 1 and self.can_collapse:
-        fieldarg, content = items[0]
-        bodynode = handle_item(fieldarg, content)
-    else:
-        bodynode = self.list_type()
-        for fieldarg, content in items:
-            bodynode += nodes.list_item('', handle_item(fieldarg, content))
-    fieldbody = nodes.field_body('', bodynode)
-    return nodes.field('', fieldname, fieldbody)
-
-TypedField.make_field = patched_make_field
