@@ -20,7 +20,7 @@ class EsbMixin(object):
     This mixin defines common attributes of emergency service boundary
     object-relational model classes.
     """
-    geom = Column(Geometry('POLYGON'))
+    geometry = Column(Geometry('POLYGON'))
 
     country = column(
         String,

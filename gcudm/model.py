@@ -6,13 +6,13 @@
 .. currentmodule:: model
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-Say something descriptive about the 'model' module.
+This module contains general members to help you work with the model.
 """
-
 import inspect
-from .meta import Column, COLUMN_META_ATTR, TableMeta, TABLE_META_ATTR
 import pkgutil
 import gcudm.models
+from .meta import Column, COLUMN_META_ATTR, TableMeta, TABLE_META_ATTR
+
 
 _SKIP_ON_LOAD = [
 
@@ -74,10 +74,9 @@ def load():
     """
     package = gcudm.models
     prefix = package.__name__ + '.'
-    for importer, modname, ispkg in pkgutil.walk_packages(
+    for _, modname, _ in pkgutil.walk_packages(
             package.__path__, prefix):
         if modname in _SKIP_ON_LOAD:
             continue
         else:
             _ = __import__(modname)
-

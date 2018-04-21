@@ -11,8 +11,8 @@ model.
 """
 
 from enum import IntFlag
-from sqlalchemy import Column
 from typing import Any, NamedTuple, Type, Union
+from sqlalchemy import Column
 
 
 COLUMN_META_ATTR = '__meta__'  #: the property that contains column metadata
@@ -40,21 +40,40 @@ class Usage(IntFlag):
 class TableMeta(NamedTuple):
     """
     Metadata for tables.
+
+    :ivar label: a human-friendly label for the column
+    :vartype label: `str`
     """
-    label: str = None  #: the friendly label for the table
+    label: str = None  #: a human-friendly label for the column
 
 
 class ColumnMeta(NamedTuple):
     """
     Metadata for table columns.
+
+    :ivar label: a human-friendly label for the column
+    :vartype label: str
+    :ivar description:  a human-friendly description of the column
+    :vartype description: str
+    :ivar nena:  the name of the equivalent NENA field
+    :vartype nena: str
+    :ivar requirement:  defines the source data contract
+    :vartype requirement: :py:class:`Requirement`
+    :ivar usage:  defines how the data in the column is expected to be used
+    :vartype usage: :py:class:`Usage`
+    :ivar guaranteed:  Is the column guaranteed to contain a non-empty value?
+    :vartype guaranteed: bool
+    :ivar calculated:  May the column's value be generated or modified by
+        a calculation?
+    :vartype calculated: bool
     """
-    label: str  #: a human-friendly column label
+    label: str = None
     description: str = 'This field needs a description.'
-    nena: str or None = None  #: the equivalent NENA field
-    requirement: Requirement or int = Requirement.NONE  #: the source contract
-    usage: Usage or int = Usage.NONE  #: describes how data is used
-    guaranteed: bool = False  #: Is the column guaranteed to contain a value?
-    calculated: bool = False  #: May the column's value be calculated?
+    nena: str or None = None
+    requirement: Requirement or int = Requirement.NONE
+    usage: Usage or int = Usage.NONE
+    guaranteed: bool = False
+    calculated: bool = False
 
     def get_enum(
             self,
@@ -70,8 +89,7 @@ class ColumnMeta(NamedTuple):
             return self.requirement
         elif enum_cls == Usage:
             return self.usage
-        else:
-            return None
+        return None
 
 
 def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
@@ -82,10 +100,6 @@ def column(dtype: Any, meta: ColumnMeta, *args, **kwargs) -> Column:
     :param meta: the meta data
     :return: a GeoAlchemy :py:class:`Column`
     """
-    c = Column(dtype, *args, **kwargs)
-    c.__dict__[COLUMN_META_ATTR] = meta
-    return c
-
-
-
-
+    col = Column(dtype, *args, **kwargs)
+    col.__dict__[COLUMN_META_ATTR] = meta
+    return col

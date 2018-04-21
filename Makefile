@@ -9,6 +9,9 @@ build:
 freeze:
 	pip freeze > requirements.txt
 
+lint:
+	pylint $(PROJ_NAME)
+
 test:
 	py.test --cov . tests/
 
@@ -21,11 +24,11 @@ docs: coverage
 	mkdir -p docs/source/_templates
 	cd docs && $(MAKE) html
 
-pubtest: docs
+package: clean docs
 	python setup.py sdist
 
-publish: clean docs
-	python setup.py sdist upload -r pypi
+publish: package
+	twine upload dist/*
 
 clean :
 	rm -rf dist \

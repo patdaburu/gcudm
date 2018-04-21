@@ -5,17 +5,13 @@
 """
 .. currentmodule:: road_centerlines
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
-
-
-
-
 """
 
+from sqlalchemy import Column, String
+from geoalchemy2 import Geometry
 from ..model import model
 from ..meta import column, ColumnMeta, Requirement, Usage
 from ..base import Base, ModelMixin
-from sqlalchemy import Column, Integer, String, DateTime
-from geoalchemy2 import Geometry
 
 
 @model(label='Road Centerlines')
@@ -27,7 +23,7 @@ class RoadCenterline(Base, ModelMixin):
 
     __tablename__ = 'road_centerlines'
 
-    geom = Column(Geometry('LINESTRING'))
+    geometry = Column(Geometry('LINESTRING'))
 
     srcFullNam = column(
         String,
@@ -170,7 +166,7 @@ class RoadCenterline(Base, ModelMixin):
             nena='St_PosTyp'
         )
     )
-    
+
     postDir = column(
         String,
         ColumnMeta(
@@ -201,7 +197,7 @@ class RoadCenterline(Base, ModelMixin):
             nena=None
         )
     )
-    
+
     lgcyPrType = column(
         String,
         ColumnMeta(
@@ -209,7 +205,7 @@ class RoadCenterline(Base, ModelMixin):
             nena='LSt_PreDir'
         )
     )
-    
+
     lgcyPrTySp = column(
         String,
         ColumnMeta(
@@ -232,7 +228,7 @@ class RoadCenterline(Base, ModelMixin):
             nena='LSt_Type'
         )
     )
-    
+
     lgcyPstDir = column(
         String,
         ColumnMeta(
@@ -247,7 +243,7 @@ class RoadCenterline(Base, ModelMixin):
             label='Legacy Street Name Post Modifier'
         )
     )
-    
+
     esnL = column(
         String,
         ColumnMeta(
@@ -256,7 +252,7 @@ class RoadCenterline(Base, ModelMixin):
             requirement=Requirement.REQUIRED
         )
     )
-    
+
     esnR = column(
         String,
         ColumnMeta(
@@ -369,14 +365,3 @@ class RoadCenterline(Base, ModelMixin):
             nena='UnincCom_R'
         )
     )
-
-
-
-
-
-
-
-
-
-
-

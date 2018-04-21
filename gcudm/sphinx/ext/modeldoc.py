@@ -9,12 +9,9 @@
 This module contains a Sphinx extension that can be used to generate specialized
 documentation for model classes.
 """
-
-
-from ...model import IS_MODEL_CLASS
-from ...meta import (
-    ColumnMeta, COLUMN_META_ATTR, TABLE_META_ATTR, Requirement, Usage
-)
+import logging
+import uuid
+from typing import Any, cast, Set, Type, Union
 from sphinx.ext.autodoc import (
     ClassLevelDocumenter, AttributeDocumenter, ClassDocumenter
 )
@@ -22,20 +19,34 @@ from sphinx.util.docstrings import prepare_docstring
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from titlecase import titlecase
-from typing import Any, Set, Type, Union
-import uuid
+from .monkeypatch import monkeypatch
+from ...base import ModelMixin
+from ...model import IS_MODEL_CLASS
+from ...meta import (
+    ColumnMeta, COLUMN_META_ATTR, TABLE_META_ATTR, Requirement, Usage
+)
+
+
+# Apply monkeypatches.
+monkeypatch()
 
 
 __version__ = '0.0.1'  #: the version of this Sphinx extension
 
 
 def setup(app):
+    """
+    Set up the Sphinx extension.
+
+    :param app: the Sphinx environment.
+    """
     # type: (Sphinx) -> Dict[unicode, Any]
     app.add_autodocumenter(ModelClassDocumenter)
     app.add_autodocumenter(ColumnAttributeDocumenter)
     return {'version': __version__, 'parallel_read_safe': True}
 
 
+# pylint: disable=too-many-locals
 class ModelClassDocumenter(ClassDocumenter):
     """
     This is a specialized Documenter subclass for classes.  It overrides the
@@ -53,20 +64,49 @@ class ModelClassDocumenter(ClassDocumenter):
         # docstring.
         img_sub = str(uuid.uuid4()).replace('-', '')
         lines = [[
-            f".. |{img_sub}| image:: _static/images/table.svg",
+            f".. |{img_sub}_tbl| image:: _static/images/table.svg",
             '    :width: 24px',
             '    :height: 24px',
-            '',
-            f"|{img_sub}|",
+            ''
+        ]]
+        geom_markup: bool = False
+        # Try to add the geometry type image.
+        try:
+            gtype = cast(ModelMixin, self.object).geometry_type()
+            gtype_file = gtype.name.lower()
+            lines[0].extend([
+                f".. |{img_sub}_geom| image:: _static/images/{gtype_file}.svg",
+                '    :width: 24px',
+                '    :height: 24px',
+                ''
+            ])
+            # We have geometry markup!
+            geom_markup = True
+        except KeyError:
+            logging.exception(
+                f'{type(self.object)} does not define a geometry.'
+            )
+        # Create the line that defines the image that will appear before the
+        # rest of the documentation.
+        img_line = (
+            f"|{img_sub}_tbl| |{img_sub}_geom|" if geom_markup
+            else f"|{img_sub}_tbl|"
+        )
+
+        # Add the table image, along with (possibly) the geometry image and
+        # the title.
+        lines[0].extend([
+            img_line,
             self.object.__doc__ or '', '',
             f':Table Name: {self.object.__tablename__}', ''
-        ]]
+        ])
+
         # If the table has a geometry...
         geom_type = self.object.geometry_type()
         if geom_type is not None:
             # ...indicate the geometry type in the document.
             lines[0].extend([
-                f':Geometry Type: {self.object.geometry_type()}', ''
+                f':Geometry Type: {titlecase(self.object.geometry_type().name)}', ''
             ])
         # Return whatever we have.
         return lines
@@ -118,7 +158,7 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
                                     excluded={Usage.NONE}), '',
                 self.doc_enum_table(enum_cls=Requirement,
                                     meta=meta,
-                                    excluded={Requirement.REQUIRED}), ''
+                                    excluded={Requirement.NONE}), ''
             ]
             # If the meta-data indicates there is a related NENA field...
             if meta.nena is not None:
@@ -158,9 +198,9 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
         tbl_headers = [''] * len(vals)  # the table headers
         tbl_values = [''] * len(vals)  # the values
         # Let's look at each of the values.
-        for i in range(0, len(vals)):
+        for i, val in enumerate(vals):
             # We need the name.
-            enum_name = vals[i].name
+            enum_name = val.name
             # The character width of the column is the length of the name
             # plus one (1) padding space on each side.
             colwidth = (len(enum_name) + 2)
@@ -172,7 +212,7 @@ class ColumnAttributeDocumenter(AttributeDocumenter):
             tbl_headers[i] = f' {titlecase(enum_name)} '
             # The yes-or-no indicator will only take up a single character,
             # but we need to pad it to maintain the fixed width.
-            xo = [' '] * colwidth
+            xo = [' '] * colwidth  # pylint: disable=invalid-name
             # Leaving one space on the left, put a yes-or-no indicator in
             # the column.  (We're using ASCII characters which we'll
             # replace in a moment.  For some reason, the extended characters

@@ -8,8 +8,5 @@
 GeoComm Unified Data Model
 """
 
-__version__ = '0.0.6'  #: the working version
-__release__ = '0.0.6'  #: the release version
-
-
-
+__version__ = '0.0.8'  #: the working version
+__release__ = '0.0.8'  #: the release version
