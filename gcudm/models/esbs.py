@@ -12,7 +12,7 @@ object-relational model classes.
 
 from sqlalchemy import Column, String
 from geoalchemy2 import Geometry
-from ..meta import column, ColumnMeta, Requirement, Usage
+from ..meta import column, ColumnMeta, Requirement, Source, Target, Usage
 
 
 class EsbMixin(object):
@@ -33,7 +33,7 @@ class EsbMixin(object):
         String,
         ColumnMeta(
             label='State',
-            guaranteed=True
+            target=Target(guaranteed=True)
         )
     )
 
@@ -49,8 +49,8 @@ class EsbMixin(object):
         ColumnMeta(
             label='Agency ID',
             nena='Agency_ID',
-            requirement=Requirement.REQUIRED,
-            guaranteed=True
+            source=Source(requirement=Requirement.REQUIRED),
+            target=Target(guaranteed=True)
         )
     )
 
@@ -59,8 +59,8 @@ class EsbMixin(object):
         ColumnMeta(
             label='Service URI',
             nena='ServiceURI',
-            requirement=Requirement.REQUIRED,
-            guaranteed=True
+            source=Source(requirement=Requirement.REQUIRED),
+            target=Target(guaranteed=True)
         )
     )
 
@@ -69,8 +69,8 @@ class EsbMixin(object):
         ColumnMeta(
             label='Service URI',
             nena='ServiceURI',
-            requirement=Requirement.REQUIRED,
-            guaranteed=True
+            source=Source(requirement=Requirement.REQUIRED),
+            target=Target(guaranteed=True)
         )
     )
 
@@ -79,7 +79,7 @@ class EsbMixin(object):
         ColumnMeta(
             label='Service Number',
             nena='ServiceNum',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -96,6 +96,6 @@ class EsbMixin(object):
         ColumnMeta(
             label='Display Name',
             nena='DisplayName',
-            requirement=Requirement.REQUIRED
+            source=Source(requirement=Requirement.REQUIRED)
         )
     )

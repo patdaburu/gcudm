@@ -12,7 +12,7 @@ along with some other helpful classes.
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import String, DateTime
 from .geometry import GeometryTypes
-from .meta import column, ColumnMeta, Requirement
+from .meta import column, ColumnMeta, Requirement, Source, Target
 from .types import GUID
 
 
@@ -34,8 +34,10 @@ class ModelMixin(object):
         GUID,
         meta=ColumnMeta(
             label='GeoComm ID',
-            guaranteed=True,
-            calculated=True
+            target=Target(
+                guaranteed=True,
+                calculated=True
+            )
         ),
         primary_key=True
     )
@@ -72,7 +74,7 @@ class ModelMixin(object):
         DateTime,
         ColumnMeta(
             label='Effective Date',
-            requirement=Requirement.REQUESTED
+            source=Source(requirement=Requirement.REQUESTED)
         )
     )
 
@@ -80,7 +82,7 @@ class ModelMixin(object):
         DateTime,
         ColumnMeta(
             label='Expiration Date',
-            requirement=Requirement.REQUESTED
+            source=Source(requirement=Requirement.REQUESTED)
         )
     )
 
@@ -89,7 +91,7 @@ class ModelMixin(object):
         ColumnMeta(
             label='NENA ID',
             nena='RCL_NGUID',
-            requirement=Requirement.REQUESTED
+            source=Source(requirement=Requirement.REQUESTED)
         )
     )
 

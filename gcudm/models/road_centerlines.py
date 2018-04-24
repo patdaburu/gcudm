@@ -10,7 +10,7 @@
 from sqlalchemy import Column, String
 from geoalchemy2 import Geometry
 from ..model import model
-from ..meta import column, ColumnMeta, Requirement, Usage
+from ..meta import column, ColumnMeta, Requirement, Source, Target, Usage
 from ..base import Base, ModelMixin
 
 
@@ -29,7 +29,7 @@ class RoadCenterline(Base, ModelMixin):
         String,
         ColumnMeta(
             label='Source Full Name',
-            requirement=Requirement.REQUESTED
+            source=Source(requirement=Requirement.REQUESTED)
         )
     )  #: here is an annotation!
 
@@ -37,9 +37,9 @@ class RoadCenterline(Base, ModelMixin):
         String,
         ColumnMeta(
             label='Left Address Number Prefix',
-            requirement=Requirement.REQUESTED,
+            source=Source(requirement=Requirement.REQUESTED),
             nena='AdNumPre_L',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
 
         )
     )
@@ -48,9 +48,9 @@ class RoadCenterline(Base, ModelMixin):
         String,
         ColumnMeta(
             label='Right Address Number Prefix',
-            requirement=Requirement.REQUESTED,
+            source=Source(requirement=Requirement.REQUESTED),
             nena='AdNumPre_R',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
 
         )
     )
@@ -60,8 +60,8 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label="Left 'From' Address",
             nena='FromAddr_L',
-            requirement=Requirement.REQUESTED,
-            usage=Usage.DISPLAY
+            source=Source(requirement=Requirement.REQUESTED),
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -70,8 +70,8 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label="Left 'To' Address",
             nena='ToAddr_L',
-            requirement=Requirement.REQUESTED,
-            usage=Usage.DISPLAY
+            source=Source(requirement=Requirement.REQUESTED),
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -80,8 +80,8 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label="Right 'From' Address",
             nena='FromAddr_R',
-            requirement=Requirement.REQUESTED,
-            usage=Usage.DISPLAY
+            source=Source(requirement=Requirement.REQUESTED),
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -90,8 +90,8 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label="Right 'To' Address",
             nena='ToAddr_R',
-            requirement=Requirement.REQUESTED,
-            usage=Usage.DISPLAY
+            source=Source(requirement=Requirement.REQUESTED),
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -155,7 +155,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='Street Name',
             nena='StreetName',
-            requirement=Requirement.REQUIRED
+            source=Source(requirement=Requirement.REQUIRED)
         )
     )
 
@@ -249,7 +249,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='ESN Left',
             nena='ESN_L',
-            requirement=Requirement.REQUIRED
+            source=Source(requirement=Requirement.REQUIRED)
         )
     )
 
@@ -258,7 +258,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='ESN Right',
             nena='ESN_R',
-            requirement=Requirement.REQUIRED
+            source=Source(requirement=Requirement.REQUIRED)
         )
     )
 
@@ -267,8 +267,8 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='MSAG Community Name Left',
             nena='MSAGComm_L',
-            requirement=Requirement.REQUIRED,
-            usage=Usage.DISPLAY
+            source=Source(requirement=Requirement.REQUIRED),
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -277,8 +277,8 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='MSAG Community Name Right',
             nena='MSAGComm_R',
-            requirement=Requirement.REQUIRED,
-            usage=Usage.DISPLAY
+            source=Source(requirement=Requirement.REQUIRED),
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -303,7 +303,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='State Left',
             nena='State_L',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -312,7 +312,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='State Right',
             nena='State_R',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -337,7 +337,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='Incorporated Municipality Left',
             nena='IncMuni_L',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
         )
     )
 
@@ -346,7 +346,7 @@ class RoadCenterline(Base, ModelMixin):
         ColumnMeta(
             label='Incorporated Municipality Right',
             nena='IncMuni_R',
-            usage=Usage.DISPLAY
+            target=Target(usage=Usage.DISPLAY)
         )
     )
     

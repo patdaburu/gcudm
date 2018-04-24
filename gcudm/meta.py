@@ -28,6 +28,16 @@ class Requirement(IntFlag):
     REQUIRED = 3  #: data for the column is required
 
 
+class Source(NamedTuple):
+    """
+    'Source' information defines contracts with data providers.
+
+    :ivar requirement:  defines the source data contract
+    :vartype requirement: :py:class:`Requirement`
+    """
+    requirement: Requirement = Requirement.NONE
+
+
 class Usage(IntFlag):
     """
     This enumeration describes how data may be used.
@@ -35,6 +45,23 @@ class Usage(IntFlag):
     NONE = 0  #: The data is not used.
     SEARCH = 1  #: The data is used for searching.
     DISPLAY = 2  #: The data is displayed to users.
+
+
+class Target(NamedTuple):
+    """
+    'Target' information describes contracts with data consumers.
+
+    :ivar usage:  defines how the data in the column is expected to be used
+    :vartype usage: :py:class:`Usage`
+    :ivar guaranteed:  Is the column guaranteed to contain a non-empty value?
+    :vartype guaranteed: bool
+    :ivar calculated:  May the column's value be generated or modified by
+        a calculation?
+    :vartype calculated: bool
+    """
+    usage: Usage = Usage.NONE
+    guaranteed: bool = False
+    calculated: bool = False
 
 
 class TableMeta(NamedTuple):
@@ -57,23 +84,12 @@ class ColumnMeta(NamedTuple):
     :vartype description: str
     :ivar nena:  the name of the equivalent NENA field
     :vartype nena: str
-    :ivar requirement:  defines the source data contract
-    :vartype requirement: :py:class:`Requirement`
-    :ivar usage:  defines how the data in the column is expected to be used
-    :vartype usage: :py:class:`Usage`
-    :ivar guaranteed:  Is the column guaranteed to contain a non-empty value?
-    :vartype guaranteed: bool
-    :ivar calculated:  May the column's value be generated or modified by
-        a calculation?
-    :vartype calculated: bool
     """
     label: str = None
     description: str = 'This field needs a description.'
     nena: str or None = None
-    requirement: Requirement or int = Requirement.NONE
-    usage: Usage or int = Usage.NONE
-    guaranteed: bool = False
-    calculated: bool = False
+    source: Source = Source()
+    target: Target = Target()
 
     def get_enum(
             self,
@@ -86,9 +102,9 @@ class ColumnMeta(NamedTuple):
         :return: the value of the attribute
         """
         if enum_cls == Requirement:
-            return self.requirement
+            return self.source.requirement
         elif enum_cls == Usage:
-            return self.usage
+            return self.target.usage
         return None
 
 
