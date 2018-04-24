@@ -22,4 +22,3 @@ class EsbLaw(Base, ModelMixin, EsbMixin):
     """
 
     __tablename__ = 'esblaw'
-

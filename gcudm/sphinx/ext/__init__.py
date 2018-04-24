@@ -6,5 +6,5 @@
 .. currentmodule:: __init__.py
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-Say something descriptive about the '__init__.py' module.
+Within this package are Sphinx extensions to help with data model docs.
 """

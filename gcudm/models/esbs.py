@@ -10,9 +10,9 @@ This module provides a common mixin for all emergency service boundary
 object-relational model classes.
 """
 
-from ..meta import column, ColumnMeta, Requirement, Usage
 from sqlalchemy import Column, String
 from geoalchemy2 import Geometry
+from ..meta import column, ColumnMeta, Requirement, Usage
 
 
 class EsbMixin(object):
@@ -96,9 +96,6 @@ class EsbMixin(object):
         ColumnMeta(
             label='Display Name',
             nena='DisplayName',
-            requirement=Requirement.REQUIRED,
-            #usage=Usage.DISPLAY | Usage.SEARCH
+            requirement=Requirement.REQUIRED
         )
     )
-
-
